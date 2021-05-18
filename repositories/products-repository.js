@@ -216,6 +216,11 @@ const updateSubcategory = async (data, id) => {
 const getTopProducts = async () => {
     const getTopProducts = 'SELECT * FROM products ORDER BY views DESC LIMIT ?';
     const [data] = await database.pool.query(getTopProducts, 4);
+    for (prod of data) {
+        const images = await findImageById(prod.id);
+        prod.images = [...images];
+    }
+
     return data;
 };
 
