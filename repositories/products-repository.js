@@ -70,8 +70,14 @@ const getCatalogue = async (querySearch) => {
         finalSearch = products;
     }
 
+    for (prod of finalSearch) {
+        const images = await findImageById(prod.id);
+        prod.images = [...images];
+    }
+
     return finalSearch;
 };
+
 /**
  * Función que recupera los productos en venta de un determinado usuario
  * @param {Number} userId Id del usuario.
