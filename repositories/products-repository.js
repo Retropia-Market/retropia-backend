@@ -90,6 +90,11 @@ const getCatalogueByUserId = async (userId) => {
         getCatalogueByUserIdQuery,
         userId
     );
+    for (prod of getData) {
+        const images = await findImageById(prod.id);
+        prod.images = [...images];
+    }
+
     return getData;
 };
 
@@ -183,6 +188,12 @@ const searchCatalogue = async (search) => {
     const term = `%${search}%`;
     const searchQuery = `SELECT * FROM products WHERE name LIKE ?`;
     const [searchData] = await database.pool.query(searchQuery, term);
+
+    for (prod of searchData) {
+        const images = await findImageById(prod.id);
+        prod.images = [...images];
+    }
+
     return searchData;
 };
 
