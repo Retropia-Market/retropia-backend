@@ -49,13 +49,10 @@ const addProductToSellList = async (req, res, next) => {
             id
         );
 
-        files.forEach(async (image) => {
-            const url = `static/images/${id}/${image.filename}`;
-            const addImage = await imagesRepository.createImage(
-                url,
-                createProduct.id
-            );
-        });
+        for (file of files) {
+            const url = `static/images/${id}/${file.filename}`;
+            await imagesRepository.createImage(url, createProduct.id);
+        }
 
         const finalProduct = await productsRepository.findProductById(
             createProduct.id
@@ -96,10 +93,10 @@ const addMoreImagesToProduct = async (req, res, next) => {
             throw errorAlreadySold;
         }
 
-        files.forEach(async (image) => {
+        for (image of files) {
             const url = `static/images/${id}/${image.filename}`;
             const addImage = await imagesRepository.createImage(url, id);
-        });
+        }
         res.status(201);
         res.send('Imagenes subidas correctamente!');
     } catch (error) {
