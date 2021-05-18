@@ -1,12 +1,25 @@
 const fs = require('fs').promises;
 const { database } = require('../infrastructure');
 
+/**############################################################################
+ *
+ * Funcion para obtener todos los usuarios registrados en la pagina
+ * @returns {Array} users registrados
+ */
+
 async function getUsers() {
   const query = 'SELECT * FROM users';
   const [users] = await database.pool.query(query);
 
   return users;
 }
+
+/**############################################################################
+ *
+ * Funcion para buscar usuario por direccion de correo electronico
+ * @param {String} email email del usuario a buscar
+ * @returns {Object} usuario con email proporcionado
+ */
 
 async function findUserByEmail(email) {
   const query = 'SELECT * FROM users WHERE email = ?';
@@ -15,12 +28,26 @@ async function findUserByEmail(email) {
   return users[0];
 }
 
+/**############################################################################
+ *
+ * Funcion para obtener usuario por id de usuario
+ * @param {Number} id id del usuario a buscar
+ * @returns {Object} usuario con id proporcionado
+ */
+
 async function findUserById(id) {
   const query = 'SELECT * FROM users WHERE id = ?';
   const [users] = await database.pool.query(query, id);
 
   return users[0];
 }
+
+/**############################################################################
+ *
+ * Funcion para registrar usuario
+ * @param {Object} data objeto con la informacion obligatoria de registro
+ * @returns {Object} objeto con la informacion del usuario creado
+ */
 
 async function registerUser(data) {
   const query =
@@ -37,11 +64,15 @@ async function registerUser(data) {
   return findUserByEmail(data.email);
 }
 
-async function updateProfile(data, id) {
-  /** espera data como objeto de los datos de usuario recogidos del body
-   *  e id como el id del usuario recogido del token de autenticacion
-   */
+/**############################################################################
+ *
+ * Funcion para actualizar el perfil de un usuario
+ * @param {Object} data objecto con la nueva informacion del usuario
+ * @param {Number} id id del usuario
+ * @returns {Object} objeto del usuario actualizado
+ */
 
+async function updateProfile(data, id) {
   const replaceNotNull = async (column, value, userId = id) => {
     /** se asume que column es la propiedad cuyo valor se quiere cambiar en la base de datos,
      * value el nuevo valor que se le quiere dar,
@@ -59,20 +90,30 @@ async function updateProfile(data, id) {
   return findUserById(id);
 }
 
+/**############################################################################
+ *
+ * Funcion para actualizar la password de un usuario
+ * @param {String} hashedPassword hash de la nueva password proporcionada
+ * @param {Number} id id del usuario
+ * @returns {Object} del objeto actualizado
+ */
+
 async function updatePassword(hashedPassword, id) {
-  /**
-   * Se espera el hash de la password y el id del usuario
-   */
   const updatePasswordQuery = 'UPDATE users SET password = ? WHERE id = ?';
   await database.pool.query(updatePasswordQuery, [hashedPassword, id]);
 
   return findUserById(id);
 }
 
+/**############################################################################
+ *
+ * Funcion para actualizar la imagen de un usuario
+ * @param {Number} id id del usuario
+ * @param {String} imagePath
+ * @returns {object} objeto del usuario actualizado
+ */
+
 async function updateImage(id, imagePath) {
-  /** La funcion espera como parametros el id del usuario y la ruta
-   *  en la que guardar la imagen con su nombre incluido como uuid
-   */
   // obtener path a la imagen anterior del usuario
   const searchQuery = 'SELECT image FROM users WHERE id = ?';
   const [[{ image }]] = await database.pool.query(searchQuery, id);
@@ -86,11 +127,14 @@ async function updateImage(id, imagePath) {
   return findUserById(id);
 }
 
-async function deleteImage(id) {
-  /**
-   * Se espera como parametro el id del usuario al que borrar la imagen
-   */
+/**############################################################################
+ *
+ * Funcion para eliminar la imagen de un usuario
+ * @param {Number} id id del usuario
+ * @returns {Object} objecto con el usuario actualizado
+ */
 
+async function deleteImage(id) {
   // Obtener path a la imagen del usuario
   const searchQuery = 'SELECT image FROM users WHERE id = ?';
   const [[{ image }]] = await database.pool.query(searchQuery, id);
