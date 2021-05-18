@@ -1,6 +1,6 @@
 const { database } = require('../infrastructure');
 const { format } = require('date-fns');
-const {} = require('./images-repository');
+const { findImageById } = require('./images-repository');
 
 /**
  * Función para añadir el producto a la base de datos.
@@ -106,6 +106,8 @@ const findProductById = async (id) => {
     const getSingleProduct =
         'SELECT products.id, products.seller_id, users.firstname as seller, products.name, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views  FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN users ON products.seller_id = users.id WHERE products.id = ?';
     const [product] = await database.pool.query(getSingleProduct, id);
+    const images = await findImageById(id);
+    product[0].images = [...images];
     return product[0];
 };
 
@@ -142,7 +144,7 @@ const updateProduct = async (data, id) => {
             await updateSubcategory(data, id);
         }
     });
-    return await findProductById(id);
+    await findProductById(id);
 };
 
 /**
