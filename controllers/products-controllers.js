@@ -10,7 +10,7 @@ const getCatalogue = async (req, res, next) => {
         const products = await productsRepository.getCatalogue(
             req.query ? req.query : ''
         );
-        res.send(products);
+        await res.send(products);
     } catch (error) {
         next(error);
     }
@@ -57,8 +57,12 @@ const addProductToSellList = async (req, res, next) => {
             );
         });
 
+        const finalProduct = await productsRepository.findProductById(
+            createProduct.id
+        );
+
         res.status(201);
-        res.send(createProduct);
+        res.send(finalProduct);
     } catch (error) {
         next(error);
     }
@@ -173,8 +177,11 @@ const updateProduct = async (req, res, next) => {
             errorAlreadySold.code = 403;
             throw errorAlreadySold;
         }
-        const update = await productsRepository.updateProduct(req.body, id);
-        res.send(update);
+        const product = await productsRepository.updateProduct(req.body, id);
+        setTimeout(async () => {
+            const updatedProduct = await productsRepository.findProductById(id);
+            res.send(updatedProduct);
+        }, 150);
     } catch (error) {
         next(error);
     }

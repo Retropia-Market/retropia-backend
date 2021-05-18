@@ -1,11 +1,12 @@
 const { imagesRepository } = require('../repositories');
+const fs = require('fs').promises;
 
 async function deleteImageById(req, res, next) {
     try {
         const { id } = req.params;
         const { id: userId } = req.auth;
 
-        const image = await imagesRepository.findImageById(id);
+        const image = await imagesRepository.findImageByImageId(id);
 
         if (!image) {
             const err = new Error('No existe la imagen');
@@ -24,6 +25,7 @@ async function deleteImageById(req, res, next) {
         }
 
         await imagesRepository.deleteImageById(id);
+        await fs.unlink(image.url);
 
         res.status(204);
         res.send();
