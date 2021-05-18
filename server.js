@@ -186,6 +186,13 @@ app.post(
     bidsController.placeBid
 );
 
+// Aceptar Oferta by ID
+app.patch(
+    '/products/bid/:bidId/accept',
+    validateAuthorization,
+    bidsController.acceptBid
+);
+
 // Eliminar Oferta
 app.delete(
     '/products/bid/:bidId/delete',

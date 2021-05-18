@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { bidsRepository } = require('../repositories');
+const { bidsRepository, productsRepository } = require('../repositories');
 
 async function placeBid(req, res, next) {
   try {
@@ -25,6 +25,31 @@ async function placeBid(req, res, next) {
     await bidsRepository.placeBid(id, productId, data.bidPrice, data.message);
     res.send({"Status": "OK",
     "Message": "Oferta realizada con exito."});
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function acceptBid(req, res, next) {
+  try {
+    const { id } = req.auth;
+    const { bidId } = req.params;
+    const bidAccepted = await bidsRepository.getBidById(bidId);
+    
+    if (id !== productsRepository.findProductById(bidId).user_id) {
+      const err = new Error('No tienes permisos para aceptar esta oferta');
+      err.code = 401;
+      throw err;
+    }
+
+    if (bidAccepted[0].bid_status === 'aceptado') {
+      const err = new Error('Ya has aceptado la oferta por este producto.');
+      err.code = 409;
+      throw err;}
+
+    await bidsRepository.acceptBid(bidId);
+    res.send({"Status": "OK",
+    "Message": "Oferta aceptada con exito."});
   } catch (error) {
     next(error);
   }
@@ -112,6 +137,7 @@ async function getProductsBidsById(req, res, next) {
 }
 
 module.exports = {
+  acceptBid,
   placeBid,
   deleteBidById,
   modifyBidById,

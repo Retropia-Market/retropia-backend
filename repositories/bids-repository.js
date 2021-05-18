@@ -87,6 +87,16 @@ async function getProductsBidsById(productId) {
   }
 }
 
+async function acceptBid(bidId) {
+  try {
+  const query = `UPDATE bids SET bid_status = 'aceptado' WHERE id = ${bidId};`;
+  const [product_bids] = await database.pool.query(query);
+  return product_bids;
+    } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   placeBid,
   checkBidData,
@@ -96,4 +106,5 @@ module.exports = {
   modifyBid,
   getUserBidsById,
   getProductsBidsById,
+  acceptBid,
 };
