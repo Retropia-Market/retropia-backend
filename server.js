@@ -167,6 +167,8 @@ app.delete(
     reviewsController.deleteReview
 );
 
+app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
+
 // OFERTAS ****************************************************************************************************************
 
 // Ver ofertas por UserId

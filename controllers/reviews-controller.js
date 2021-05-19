@@ -13,7 +13,15 @@ const getReviewByProductId = async (req, res, next) => {
         const schema = Joi.number().min(1).positive();
         await schema.validateAsync(id);
         const getReview = await reviewsRepository.getReviewByProductId(id);
-        res.send(getReview);
+        if (!getReview.review_rating) {
+            const noReviewError = new Error(
+                'Este artículo todavía no tiene reviews'
+            );
+            noReviewError.code = 404;
+            throw noReviewError;
+        } else {
+            res.send(getReview);
+        }
     } catch (error) {
         next(error);
     }
@@ -146,14 +154,32 @@ const deleteReview = async (req, res, next) => {
 
         await reviewsRepository.deleteReview(id);
         res.status(201);
-        res.send('');
+        res.send({
+            status: 'OK',
+            message: 'Review Eliminada',
+        });
     } catch (error) {
         next(error);
     }
 };
+
+const getAvgReviewScoreByUser = async (req, res, next) => {
+    try {
+        const { id: userId } = req.params;
+
+        const getReviewRating = await reviewsRepository.getAvgReviewScoreByUser(
+            userId
+        );
+        res.send(getReviewRating);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getReviewByProductId,
     addReviewToProduct,
     updateReview,
     deleteReview,
+    getAvgReviewScoreByUser,
 };

@@ -175,10 +175,7 @@ const updateProduct = async (req, res, next) => {
             throw errorAlreadySold;
         }
         const product = await productsRepository.updateProduct(req.body, id);
-        setTimeout(async () => {
-            const updatedProduct = await productsRepository.findProductById(id);
-            res.send(updatedProduct);
-        }, 150);
+        res.send(product);
     } catch (error) {
         next(error);
     }

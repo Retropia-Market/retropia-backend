@@ -144,7 +144,7 @@ const getSingleProduct = async (id) => {
  */
 
 const updateProduct = async (data, id) => {
-    await Object.keys(data).forEach(async (bodyKey) => {
+    for (bodyKey in data) {
         if (bodyKey != 'subcategory') {
             const updateQuery = `UPDATE products SET ${bodyKey} = ? WHERE id = ?`;
             const updateData = await database.pool.query(updateQuery, [
@@ -154,8 +154,8 @@ const updateProduct = async (data, id) => {
         } else {
             await updateSubcategory(data, id);
         }
-    });
-    await findProductById(id);
+    }
+    return await findProductById(id);
 };
 
 /**
