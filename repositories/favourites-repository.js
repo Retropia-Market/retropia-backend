@@ -3,9 +3,9 @@ const { database } = require('../infrastructure');
 /**############################################################################
  *
  * Funcion para comprobar si el producto ya ha sido añadido como favorito
- * @param {Number} userId id del usuario
- * @param {Number} productId id del producto
- * @returns {Object} objeto con la informacion del favorito
+ * @param {string} userId id del usuario
+ * @param {string} productId id del producto
+ * @returns {object} objeto con la informacion del favorito
  */
 
 async function userHasFavourite(userId, productId) {
@@ -19,9 +19,9 @@ async function userHasFavourite(userId, productId) {
 /**############################################################################
  *
  * Funcion para añadir favorito
- * @param {Number} userId id del usuario
- * @param {Number} productId id del producto
- * @returns {Object} objeto con la informacion del favorito
+ * @param {string} userId id del usuario
+ * @param {string} productId id del producto
+ * @returns {object} objeto con la informacion del favorito
  */
 
 async function addFavourite(userId, productId) {
@@ -34,9 +34,9 @@ async function addFavourite(userId, productId) {
 /**############################################################################
  *
  * Funcion para eliminar un producto de favoritos
- * @param {Number} userId id del usuario
- * @param {Number} productId id del producto
- * @returns {Array} lista actualizada de los favoritos del usuario
+ * @param {string} userId id del usuario
+ * @param {string} productId id del producto
+ * @returns {array} lista actualizada de los favoritos del usuario
  */
 
 async function removeFavourite(userId, productId) {
@@ -49,8 +49,8 @@ async function removeFavourite(userId, productId) {
 /**############################################################################
  *
  * Funcion para obtener lista de favoritos de un usuario
- * @param {Number} userId id del usuario
- * @returns {Array} lista de los favoritos del usuario
+ * @param {string} userId id del usuario
+ * @returns {array} lista de los favoritos del usuario
  */
 
 async function getUserFavourites(userId) {
@@ -63,7 +63,7 @@ async function getUserFavourites(userId) {
 /**
  *
  * Funcion para obtener favoritos por id de favorito
- * @param {Number} favouriteId id del favorito
+ * @param {string} favouriteId id del favorito
  * @returns {object} objeto con la informacion del favorito
  */
 
