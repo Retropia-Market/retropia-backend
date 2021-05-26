@@ -4,7 +4,7 @@ const { database } = require('../infrastructure');
 /**############################################################################
  *
  * Funcion para obtener todos los usuarios registrados en la pagina
- * @returns {Array} users registrados
+ * @returns {array} users registrados
  */
 
 async function getUsers() {
@@ -17,8 +17,8 @@ async function getUsers() {
 /**############################################################################
  *
  * Funcion para buscar usuario por direccion de correo electronico
- * @param {String} email email del usuario a buscar
- * @returns {Object} usuario con email proporcionado
+ * @param {string} email email del usuario a buscar
+ * @returns {object} usuario con email proporcionado
  */
 
 async function findUserByEmail(email) {
@@ -31,8 +31,8 @@ async function findUserByEmail(email) {
 /**############################################################################
  *
  * Funcion para obtener usuario por id de usuario
- * @param {Number} id id del usuario a buscar
- * @returns {Object} usuario con id proporcionado
+ * @param {string} id id del usuario a buscar
+ * @returns {object} usuario con id proporcionado
  */
 
 async function findUserById(id) {
@@ -45,8 +45,8 @@ async function findUserById(id) {
 /**############################################################################
  *
  * Funcion para registrar usuario
- * @param {Object} data objeto con la informacion obligatoria de registro
- * @returns {Object} objeto con la informacion del usuario creado
+ * @param {object} data objeto con la informacion obligatoria de registro
+ * @returns {object} objeto con la informacion del usuario creado
  */
 
 async function registerUser(data) {
@@ -67,9 +67,9 @@ async function registerUser(data) {
 /**############################################################################
  *
  * Funcion para actualizar el perfil de un usuario
- * @param {Object} data objecto con la nueva informacion del usuario
- * @param {Number} id id del usuario
- * @returns {Object} objeto del usuario actualizado
+ * @param {object} data objecto con la nueva informacion del usuario
+ * @param {string} id id del usuario
+ * @returns {object} objeto del usuario actualizado
  */
 
 async function updateProfile(data, id) {
@@ -93,9 +93,9 @@ async function updateProfile(data, id) {
 /**############################################################################
  *
  * Funcion para actualizar la password de un usuario
- * @param {String} hashedPassword hash de la nueva password proporcionada
- * @param {Number} id id del usuario
- * @returns {Object} del objeto actualizado
+ * @param {string} hashedPassword hash de la nueva password proporcionada
+ * @param {string} id id del usuario
+ * @returns {object} del objeto actualizado
  */
 
 async function updatePassword(hashedPassword, id) {
@@ -108,8 +108,8 @@ async function updatePassword(hashedPassword, id) {
 /**############################################################################
  *
  * Funcion para actualizar la imagen de un usuario
- * @param {Number} id id del usuario
- * @param {String} imagePath
+ * @param {string} id id del usuario
+ * @param {string} imagePath
  * @returns {object} objeto del usuario actualizado
  */
 
@@ -130,8 +130,8 @@ async function updateImage(id, imagePath) {
 /**############################################################################
  *
  * Funcion para eliminar la imagen de un usuario
- * @param {Number} id id del usuario
- * @returns {Object} objecto con el usuario actualizado
+ * @param {string} id id del usuario
+ * @returns {object} objecto con el usuario actualizado
  */
 
 async function deleteImage(id) {

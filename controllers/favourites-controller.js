@@ -1,6 +1,6 @@
 const { nextDay } = require('date-fns');
 const { favouritesRepository } = require('../repositories');
-const { isCorrectUser } = require('./users-controller');
+const { isCorrectUser } = require('../middlewares');
 const { productsRepository } = require('../repositories');
 const { id } = require('date-fns/locale');
 

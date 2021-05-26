@@ -2,29 +2,8 @@ const Joi = require('joi');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const { isCorrectUser } = require('../middlewares');
 const { usersRepository } = require('../repositories');
-
-function isCorrectUser(reqParam, reqAuth) {
-  /** Funcion para comprobar que un usuario accede solo a sus zonas de usuario.
-   * Asume como reqParam el id en la ruta como req parameter,
-   * y reqAuth como el id recibido mediante jwt
-   */
-
-  // Comprobar que el usuario con id del req param existe
-  const user = usersRepository.findUserById(reqParam);
-  if (!user) {
-    const err = new Error('No existe usuario con ese email');
-    err.code = 401;
-    throw err;
-  }
-
-  // Comprobar que el id del parametro y el del usuario que intenta acceder son el mismo
-  if (Number(reqParam) !== reqAuth) {
-    const err = new Error('No tienes los permisos para acceder a este lugar');
-    err.code = 403;
-    throw err;
-  }
-}
 
 async function getUsers(req, res, next) {
   try {
