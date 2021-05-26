@@ -49,7 +49,7 @@ const deleteReview = async (productId) => {
 
 const getAvgReviewScoreByUser = async (userId) => {
     const queryGetRating =
-        'SELECT AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
+        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
     const [result] = await database.pool.query(queryGetRating, userId);
     return result[0];
 };
