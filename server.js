@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const { v4: uuidv4, validate } = require('uuid');
+const cors = require('cors');
 
 const {
     usersController,
@@ -209,6 +210,9 @@ app.patch(
     bidsController.modifyBidById
 );
 
+//Enable CORS
+
+app.use(cors());
 // ERROR HANDLER *********************************************************************************************************
 
 app.use(async (err, req, res, next) => {
@@ -219,4 +223,8 @@ app.use(async (err, req, res, next) => {
 
 //SERVER LISTENER ********************************************************************************************************
 
-app.listen(PORT, () => console.log(`server escuchando en puerto ${PORT}`));
+const server = app.listen(PORT, () =>
+    console.log(`server escuchando en puerto ${PORT}`)
+);
+
+module.exports = { app, server };
