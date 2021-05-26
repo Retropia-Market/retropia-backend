@@ -213,6 +213,7 @@ app.patch(
 //Enable CORS
 
 app.use(cors());
+
 // ERROR HANDLER *********************************************************************************************************
 
 app.use(async (err, req, res, next) => {

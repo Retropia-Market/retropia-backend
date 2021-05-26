@@ -74,10 +74,11 @@ const deleteReview = async (productId) => {
  * @returns {number | string} valoracion media del usuario
  */
 const getAvgReviewScoreByUser = async (userId) => {
-  const queryGetRating =
-    'SELECT AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
-  const [result] = await database.pool.query(queryGetRating, userId);
-  return result[0];
+    const queryGetRating =
+        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
+    const [result] = await database.pool.query(queryGetRating, userId);
+    return result[0];
+
 };
 
 module.exports = {
