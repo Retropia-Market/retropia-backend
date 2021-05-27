@@ -25,8 +25,12 @@ const staticPath = path.resolve(__dirname, 'static');
 
 const app = express();
 
-app.use(express.json());
+//Enable CORS
+
 app.use(express.static(staticPath));
+app.use(cors());
+
+app.use(express.json());
 
 //TODOS
 app.get('/users', usersController.getUsers);
@@ -209,10 +213,6 @@ app.patch(
     validateAuthorization,
     bidsController.modifyBidById
 );
-
-//Enable CORS
-
-app.use(cors());
 
 // ERROR HANDLER *********************************************************************************************************
 
