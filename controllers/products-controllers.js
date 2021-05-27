@@ -37,6 +37,7 @@ const addProductToSellList = async (req, res, next) => {
         const schema = Joi.object({
             name: Joi.string().required(),
             status: Joi.string().required(),
+            product_type: Joi.string().required(),
             location: Joi.string().required(),
             price: Joi.number().required().min(0).max(100000),
             description: Joi.string(),
@@ -50,7 +51,7 @@ const addProductToSellList = async (req, res, next) => {
         );
 
         for (file of files) {
-            const url = `static/images/${id}/${file.filename}`;
+            const url = `productImages/${id}/${file.filename}`;
             await imagesRepository.createImage(url, createProduct.id);
         }
 
