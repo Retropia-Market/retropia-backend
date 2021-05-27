@@ -80,19 +80,6 @@ CREATE TABLE `favourites` (
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `products_has_subcategory` (    
-    `id` int NOT NULL AUTO_INCREMENT,
-    `product_id` INT NOT NULL,
-    `subcategory_id` INT NOT NULL,
-    FOREIGN KEY (product_id)
-    REFERENCES products(id)
-    ON DELETE CASCADE,
-    FOREIGN KEY (subcategory_id)
-    REFERENCES products(id)
-    ON DELETE CASCADE,
-    PRIMARY KEY (`id`)
-);
-
 CREATE TABLE `categories` (
     `id` int NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(45) NOT NULL,
@@ -109,24 +96,20 @@ CREATE TABLE `sub_categories` (
     PRIMARY KEY (`id`)
 );
 
-INSERT INTO users (firstname, lastname, username, email, password ) VALUES
-  ('Alicia', 'Álvarez', 'alialv88', 'alicia@restaurants.com', 'pass1'),
-  ('Jorge', 'Romero', 'jorgitox99', 'jorge@restaurants.com', 'pass2'),
-  ('Verónica', 'Díaz', 'veronica93','veronica@restaurants.com', 'pass3');
+CREATE TABLE `products_has_subcategory` (    
+    `id` int NOT NULL AUTO_INCREMENT,
+    `product_id` INT NOT NULL,
+    `subcategory_id` INT NOT NULL,
+    FOREIGN KEY (product_id)
+    REFERENCES products(id)
+    ON DELETE CASCADE,
+    FOREIGN KEY (subcategory_id)
+    REFERENCES sub_categories(id)
+    ON DELETE CASCADE,
+    PRIMARY KEY (`id`)
+);
   
 INSERT INTO categories (name) VALUES ('Sony'), ('Nintendo'), ('Microsoft'), ('Atari'), ('Sega');
 
-INSERT INTO sub_categories (name, category_id) VALUES ('Play Station 1', 1), ('Xbox', 3), ('Ness', 2);
-
-INSERT INTO products (seller_id, name, status, upload_date, location, price, description) 
-	VALUES (1, "play1", "nuevo", "2192-12-31", "KANTO", 34, "super consola"), 
-    (1, "Xbox", "nuevo", "1994-12-31", "Huesca", 200,  "Espectacularmente maravilloso"),
-    (2, "NES", "Pa tirar", "2122-12-31", "Mozambique", 53, "super consola"),
-    (3, "Playstation 6", "Reventao", "2092-12-31", "El Vaticano", 312201, "super bien");
-    
-INSERT INTO products_has_subcategory (product_id, subcategory_id) VALUES(1, 1), (2, 3), (3, 2), (4, 1);
-
-SELECT products.id, products.seller_id, products.name, products.status, products.price, products.sale_status, 
-products.location, products.description, sub_categories.name AS categoria  FROM products  
-INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id 
-INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  WHERE products.id = 17;
+INSERT INTO sub_categories (name, category_id) VALUES ('PlayStation 1', 1), ('PlayStation 2', 1), ('PlayStation 3', 1), ('Xbox 360', 3), ('Xbox One', 3), ('Xbox', 3), ('NES', 2), ('Gameboy Pocket', 2), ('Gameboy Color', 2),
+ ('Gameboy Advance', 2), ('DS', 2), ('DS Lite', 2) , ('Nintendo 64', 2), ('Gamecube', 2);
