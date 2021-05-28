@@ -3,6 +3,7 @@ const productsController = require('./products-controllers');
 const reviewsController = require('./reviews-controller');
 const bidsController = require('./bids-controllers');
 const favouritesController = require('./favourites-controller');
+const categoriesController = require('./categories-controller');
 
 module.exports = {
   usersController,
@@ -10,4 +11,5 @@ module.exports = {
   reviewsController,
   bidsController,
   favouritesController,
+  categoriesController,
 };

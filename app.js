@@ -6,17 +6,18 @@ const { v4: uuidv4, validate } = require('uuid');
 const cors = require('cors');
 
 const {
-    usersController,
-    productsController,
-    reviewsController,
-    bidsController,
-    favouritesController,
+  usersController,
+  productsController,
+  reviewsController,
+  bidsController,
+  favouritesController,
+  categoriesController,
 } = require('./controllers');
 
 const {
-    validateAuthorization,
-    uploadProductImage,
-    uploadImg,
+  validateAuthorization,
+  uploadProductImage,
+  uploadImg,
 } = require('./middlewares/');
 const staticPath = path.resolve(__dirname, 'static');
 
@@ -42,60 +43,60 @@ app.post('/users/login', usersController.userLogin);
 
 // Editar información
 app.patch(
-    '/users/:id/update-profile',
-    validateAuthorization,
-    usersController.updateProfile
+  '/users/:id/update-profile',
+  validateAuthorization,
+  usersController.updateProfile
 );
 
 // Actualizar password
 app.patch(
-    '/users/:id/update-password',
-    validateAuthorization,
-    usersController.updatePassword
+  '/users/:id/update-password',
+  validateAuthorization,
+  usersController.updatePassword
 );
 
 // Actualizar imagen de usuario
 app.post(
-    '/users/:id/update-img',
-    validateAuthorization,
-    uploadImg.uploadUserImg.single('userImg'),
-    usersController.updateImage
+  '/users/:id/update-img',
+  validateAuthorization,
+  uploadImg.uploadUserImg.single('userImg'),
+  usersController.updateImage
 );
 // Borrar imagen de usuario
 app.delete(
-    '/users/:id/delete-img',
-    validateAuthorization,
-    usersController.deleteImage
+  '/users/:id/delete-img',
+  validateAuthorization,
+  usersController.deleteImage
 );
 
 // FAVORITOS ****************************************************************************************************************
 
 // Add favourite
 app.post(
-    '/:productId/addFavourite/:userId',
-    validateAuthorization,
-    favouritesController.addFavourite
+  '/:productId/addFavourite/:userId',
+  validateAuthorization,
+  favouritesController.addFavourite
 );
 
 // Remove favourite
 app.delete(
-    '/:productId/removeFavourite/:userId',
-    validateAuthorization,
-    favouritesController.removeFavourite
+  '/:productId/removeFavourite/:userId',
+  validateAuthorization,
+  favouritesController.removeFavourite
 );
 
 // Get all user favourites
 app.get(
-    '/:userId/getFavourites/',
-    validateAuthorization,
-    favouritesController.getUserFavourites
+  '/:userId/getFavourites/',
+  validateAuthorization,
+  favouritesController.getUserFavourites
 );
 
 // Get user favourite by favourite_id
 app.get(
-    '/:userId/getFavourites/:favouriteId',
-    validateAuthorization,
-    favouritesController.getFavouriteById
+  '/:userId/getFavourites/:favouriteId',
+  validateAuthorization,
+  favouritesController.getFavouriteById
 );
 
 // CATALOGO ***************************************************************************************************************
@@ -117,34 +118,34 @@ app.get('/top', productsController.getTopProducts);
 
 //Vender Producto
 app.post(
-    '/catalogue/sell',
-    validateAuthorization,
-    uploadProductImage.array('images'),
-    productsController.addProductToSellList
+  '/catalogue/sell',
+  validateAuthorization,
+  uploadProductImage.array('images'),
+  productsController.addProductToSellList
 );
 //Borrar Producto
 app.delete(
-    '/catalogue/:id/product-delete',
-    validateAuthorization,
-    productsController.removeProductbyId
+  '/catalogue/:id/product-delete',
+  validateAuthorization,
+  productsController.removeProductbyId
 );
 
 //Actualizar Producto por ID ()
 app.patch(
-    '/catalogue/:id/update',
-    validateAuthorization,
-    productsController.updateProduct
+  '/catalogue/:id/update',
+  validateAuthorization,
+  productsController.updateProduct
 );
 app.patch(
-    '/catalogue/:id/sale',
-    validateAuthorization,
-    productsController.updateSaleStatus
+  '/catalogue/:id/sale',
+  validateAuthorization,
+  productsController.updateSaleStatus
 );
 app.post(
-    '/catalogue/:id/images',
-    validateAuthorization,
-    uploadProductImage.array('images'),
-    productsController.addMoreImagesToProduct
+  '/catalogue/:id/images',
+  validateAuthorization,
+  uploadProductImage.array('images'),
+  productsController.addMoreImagesToProduct
 );
 
 // REVIEWS ****************************************************************************************************************
@@ -152,21 +153,21 @@ app.post(
 app.get('/catalogue/:id/review', reviewsController.getReviewByProductId);
 
 app.patch(
-    '/catalogue/:id/review/create',
-    validateAuthorization,
-    reviewsController.addReviewToProduct
+  '/catalogue/:id/review/create',
+  validateAuthorization,
+  reviewsController.addReviewToProduct
 );
 
 app.patch(
-    '/catalogue/:id/review/update',
-    validateAuthorization,
-    reviewsController.updateReview
+  '/catalogue/:id/review/update',
+  validateAuthorization,
+  reviewsController.updateReview
 );
 
 app.delete(
-    '/catalogue/:id/review/delete',
-    validateAuthorization,
-    reviewsController.deleteReview
+  '/catalogue/:id/review/delete',
+  validateAuthorization,
+  reviewsController.deleteReview
 );
 
 app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
@@ -175,9 +176,9 @@ app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
 
 // Ver ofertas por UserId
 app.get(
-    '/products/bid/user/:userId',
-    validateAuthorization,
-    bidsController.getUserBidsById
+  '/products/bid/user/:userId',
+  validateAuthorization,
+  bidsController.getUserBidsById
 );
 
 // Ver ofertas por ProductId
@@ -185,38 +186,43 @@ app.get('/products/:productId/bid', bidsController.getProductsBidsById);
 
 // Hacer Oferta
 app.post(
-    '/products/:productId/bid',
-    validateAuthorization,
-    bidsController.placeBid
+  '/products/:productId/bid',
+  validateAuthorization,
+  bidsController.placeBid
 );
 
 // Aceptar Oferta by ID
 app.patch(
-    '/products/bid/:bidId/accept',
-    validateAuthorization,
-    bidsController.acceptBid
+  '/products/bid/:bidId/accept',
+  validateAuthorization,
+  bidsController.acceptBid
 );
 
 // Eliminar Oferta
 app.delete(
-    '/products/bid/:bidId/delete',
-    validateAuthorization,
-    bidsController.deleteBidById
+  '/products/bid/:bidId/delete',
+  validateAuthorization,
+  bidsController.deleteBidById
 );
 
 //Modifica Oferta
 app.patch(
-    '/products/bid/:bidId/modify',
-    validateAuthorization,
-    bidsController.modifyBidById
+  '/products/bid/:bidId/modify',
+  validateAuthorization,
+  bidsController.modifyBidById
 );
+
+// CATEGORIES *********************************************************************************************************
+
+// Get subcategories with categories
+app.get('/categories/', categoriesController.getCategories);
 
 // ERROR HANDLER *********************************************************************************************************
 
 app.use(async (err, req, res, next) => {
-    const status = err.isJoi ? 400 : err.code || 500;
-    res.status(status);
-    res.send({ resultado: 'ERROR', error: err.message });
+  const status = err.isJoi ? 400 : err.code || 500;
+  res.status(status);
+  res.send({ resultado: 'ERROR', error: err.message });
 });
 
 module.exports = { app };
