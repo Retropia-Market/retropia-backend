@@ -115,6 +115,10 @@ app.get('/users/:id/catalogue', productsController.getCatalogueByUserId);
 //Obtener los productos mas visitados
 app.get('/top', productsController.getTopProducts);
 
+//Obtener productos relacionados con el producto que se esta viendo.
+
+app.get('/products/seemore/:name', productsController.getSimilarProducts);
+
 //Vender Producto
 app.post(
     '/catalogue/sell',
@@ -135,11 +139,17 @@ app.patch(
     validateAuthorization,
     productsController.updateProduct
 );
+
+//Actualizar estado de venta de producto(en venta o vendido)
+
 app.patch(
     '/catalogue/:id/sale',
     validateAuthorization,
     productsController.updateSaleStatus
 );
+
+//Añadir mas imagenes al producto
+
 app.post(
     '/catalogue/:id/images',
     validateAuthorization,

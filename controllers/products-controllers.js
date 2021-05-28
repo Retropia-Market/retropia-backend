@@ -253,6 +253,16 @@ const getTopProducts = async (req, res, next) => {
     }
 };
 
+const getSimilarProducts = async (req, res, next) => {
+    try {
+        const { name } = req.params;
+        const data = await productsRepository.getSimilarProducts();
+        res.send(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     addProductToSellList,
     getCatalogue,
@@ -264,4 +274,5 @@ module.exports = {
     addMoreImagesToProduct,
     getCatalogueByUserId,
     getTopProducts,
+    getSimilarProducts,
 };
