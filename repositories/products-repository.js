@@ -239,7 +239,7 @@ const getTopProducts = async () => {
 const getSimilarProducts = async (subCatName) => {
     const getRelatedProducts =
         'SELECT products.id, products.seller_id, products.name, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id WHERE sub_categories.name = ? ORDER BY RAND() LIMIT 4';
-    const [data] = await database.pool.query(getSingleProduct, subCatName);
+    const [data] = await database.pool.query(getRelatedProducts, subCatName);
     for (prod of data) {
         const images = await findImageById(prod.id);
         prod.images = [...images];

@@ -117,7 +117,10 @@ app.get('/top', productsController.getTopProducts);
 
 //Obtener productos relacionados con el producto que se esta viendo.
 
-app.get('/products/seemore/:name', productsController.getSimilarProducts);
+app.get(
+    '/catalogue/seemore/:subcategory',
+    productsController.getSimilarProducts
+);
 
 //Vender Producto
 app.post(
@@ -220,6 +223,10 @@ app.patch(
     validateAuthorization,
     bidsController.modifyBidById
 );
+
+//EXTERNAL APIS
+
+app.get('/igdb/games');
 
 // ERROR HANDLER *********************************************************************************************************
 

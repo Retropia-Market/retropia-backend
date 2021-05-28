@@ -255,8 +255,12 @@ const getTopProducts = async (req, res, next) => {
 
 const getSimilarProducts = async (req, res, next) => {
     try {
-        const { name } = req.params;
-        const data = await productsRepository.getSimilarProducts();
+        const { subcategory } = req.params;
+        const schema = Joi.object({
+            subcategory: Joi.string().required(),
+        });
+        await schema.validateAsync({ subcategory });
+        const data = await productsRepository.getSimilarProducts(subcategory);
         res.send(data);
     } catch (error) {
         next(error);
