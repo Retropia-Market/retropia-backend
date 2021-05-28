@@ -51,8 +51,13 @@ async function registerUser(req, res, next) {
 
     const createdUser = await usersRepository.registerUser(data);
 
+    const tokenPayload = { id: createdUser.id };
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      expiresIn: '30d',
+    });
+
     res.status(201);
-    res.send(createdUser);
+    res.send({ id: createdUser.id, token });
   } catch (error) {
     next(error);
   }
