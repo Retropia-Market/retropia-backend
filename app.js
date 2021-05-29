@@ -227,7 +227,6 @@ app.patch(
 
 //EXTERNAL APIS
 
-app.get('/igdb/search/:game', gamesApiController.getGameInfo);
 app.get('/rawg/search/:game', gamesApiController.getRawgInfo);
 
 // ERROR HANDLER *********************************************************************************************************
