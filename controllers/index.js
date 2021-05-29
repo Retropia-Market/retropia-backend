@@ -4,12 +4,14 @@ const reviewsController = require('./reviews-controller');
 const bidsController = require('./bids-controllers');
 const favouritesController = require('./favourites-controller');
 const categoriesController = require('./categories-controller');
+const gamesApiController = require('./gamesapi-controller');
 
 module.exports = {
-  usersController,
-  productsController,
-  reviewsController,
-  bidsController,
-  favouritesController,
-  categoriesController,
+    usersController,
+    productsController,
+    reviewsController,
+    bidsController,
+    favouritesController,
+    categoriesController,
+    gamesApiController,
 };
