@@ -11,6 +11,7 @@ const {
     reviewsController,
     bidsController,
     favouritesController,
+    gamesApiController,
 } = require('./controllers');
 
 const {
@@ -226,7 +227,8 @@ app.patch(
 
 //EXTERNAL APIS
 
-app.get('/igdb/games');
+app.get('/igdb/search/:game', gamesApiController.getGameInfo);
+app.get('/rawg/search/:game', gamesApiController.getRawgInfo);
 
 // ERROR HANDLER *********************************************************************************************************
 
