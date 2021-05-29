@@ -227,7 +227,9 @@ app.patch(
 
 //EXTERNAL APIS
 
-app.get('/rawg/search/:game', gamesApiController.getRawgInfo);
+app.get('/rawg/search/:game', gamesApiController.getRawgVideoGameInfo);
+
+app.get('/rawg/platform/', gamesApiController.getRawgConsoleInfo);
 
 // ERROR HANDLER *********************************************************************************************************
 
