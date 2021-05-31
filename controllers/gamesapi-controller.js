@@ -1,9 +1,10 @@
 const axios = require('axios');
+const vision = require('@google-cloud/vision');
 
 const getRawgVideoGameInfo = async (req, res, next) => {
     try {
         const { game } = req.params;
-        const apiURL = `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${game}&search_exact=1`;
+        const apiURL = `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${game}&search_exact=1&ordering=-metacritic`;
         const { data } = await axios.get(apiURL, {
             headers: {
                 'Content-type': 'application/json',
@@ -33,11 +34,13 @@ const getRawgConsoleInfo = async (req, res, next) => {
 
 const getGoogleVision = async (req, res, next) => {
     try {
+        const client = new vision.ImageAnnotatorClient({
+            keyFilename: './key.json',
+        });
         const { file } = req;
-        const [result] = await client.textDetection(file);
-        const detection = result.textAnnotations;
-        const { description } = detection[0];
-        res.send(result);
+        const [result] = await client.labelDetection(file);
+        const detection = result.labelAnnotations;
+        res.send(detection);
     } catch (err) {
         next(err);
     }

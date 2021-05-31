@@ -241,12 +241,11 @@ app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
 
 //TODO - Finish vision
 
-/*
 app.post(
     '/sell/vision/',
     uploadProductImage.single('image'),
     gamesApiController.getGoogleVision
-);*/
+);
 
 // ERROR HANDLER *********************************************************************************************************
 
