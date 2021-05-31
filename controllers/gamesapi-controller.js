@@ -1,4 +1,5 @@
 const axios = require('axios');
+const vision = require('@google-cloud/vision');
 
 const getRawgVideoGameInfo = async (req, res, next) => {
     try {
@@ -33,11 +34,13 @@ const getRawgConsoleInfo = async (req, res, next) => {
 
 const getGoogleVision = async (req, res, next) => {
     try {
+        const client = new vision.ImageAnnotatorClient({
+            keyFilename: './key.json',
+        });
         const { file } = req;
-        const [result] = await client.textDetection(file);
-        const detection = result.textAnnotations;
-        const { description } = detection[0];
-        res.send(result);
+        const [result] = await client.labelDetection(file);
+        const detection = result.labelAnnotations;
+        res.send(detection);
     } catch (err) {
         next(err);
     }
