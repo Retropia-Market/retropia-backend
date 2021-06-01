@@ -14,6 +14,20 @@ async function getUsers() {
   return users;
 }
 
+/**#############################################################################
+ *
+ * Funcion para obtener la informacion del usuario
+ * @param {string} id
+ * @returns {object} informacion del usuario
+ */
+
+async function getUserById(id) {
+  const query = 'SELECT * FROM users WHERE id = ?';
+  const [user] = await database.pool.query(query, id);
+
+  return user[0];
+}
+
 /**############################################################################
  *
  * Funcion para buscar usuario por direccion de correo electronico
@@ -79,7 +93,7 @@ async function updateProfile(data, id) {
      * y userId el id de usuario a cambiar la informacion.
      */
 
-    if (value !== undefined) {
+    if (value !== undefined && value.length) {
       const updateProfileQuery = `UPDATE users SET ${column} = '${value}' WHERE id = '${userId}'`;
       await database.pool.query(updateProfileQuery);
     }
@@ -150,6 +164,7 @@ async function deleteImage(id) {
 
 module.exports = {
   getUsers,
+  getUserById,
   findUserByEmail,
   findUserById,
   registerUser,

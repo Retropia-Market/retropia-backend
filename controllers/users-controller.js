@@ -15,6 +15,17 @@ async function getUsers(req, res, next) {
   }
 }
 
+async function getUserById(req, res, next) {
+  try {
+    const { id } = req.params;
+    const user = await usersRepository.getUserById(id);
+
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function registerUser(req, res, next) {
   try {
     const data = req.body;
@@ -57,7 +68,21 @@ async function registerUser(req, res, next) {
     });
 
     res.status(201);
-    res.send({ id: createdUser.id, token });
+    res.send({
+      user: {
+        id: createdUser.id,
+        username: createdUser.username,
+        id: createdUser.email,
+        fristName: createdUser.firstName,
+        lastName: createdUser.lastName,
+        location: createdUser.location,
+        bio: createdUser.bio,
+        image: createdUser.image,
+        phoneNumber: createdUser.phone_number,
+        birthDate: createdUser.birth_date,
+      },
+      token,
+    });
   } catch (error) {
     next(error);
   }
@@ -74,17 +99,17 @@ async function userLogin(req, res, next) {
 
     await schema.validateAsync({ email, password });
 
-    const user = await usersRepository.findUserByEmail(email);
+    const loggedUser = await usersRepository.findUserByEmail(email);
 
     // Comprobar que existe un usuario con ese email
-    if (!user) {
+    if (!loggedUser) {
       const err = new Error('No existe usuario con ese email');
       err.code = 401;
       throw err;
     }
 
     // Comprobar que la password del usuario es correcta
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, loggedUser.password);
     if (!isValidPassword) {
       const error = new Error('El password no es válido');
       error.code = 401;
@@ -92,13 +117,24 @@ async function userLogin(req, res, next) {
     }
 
     // Crear el token de autenticacion para el usuario
-    const tokenPayload = { id: user.id };
+    const tokenPayload = { id: loggedUser.id };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: '30d',
     });
 
     res.send({
-      id: user.id,
+      user: {
+        id: loggedUser.id,
+        username: loggedUser.username,
+        id: loggedUser.email,
+        fristName: loggedUser.firstName,
+        lastName: loggedUser.lastName,
+        location: loggedUser.location,
+        bio: loggedUser.bio,
+        image: loggedUser.image,
+        phoneNumber: loggedUser.phone_number,
+        birthDate: loggedUser.birth_date,
+      },
       token,
     });
   } catch (error) {
@@ -115,14 +151,14 @@ async function updateProfile(req, res, next) {
     isCorrectUser(id, req.auth.id);
 
     const schema = Joi.object({
-      username: Joi.string().max(30),
-      email: Joi.string().email().max(50),
-      firstname: Joi.string().max(50),
-      lastname: Joi.string().max(50),
-      location: Joi.string().max(100),
-      bio: Joi.string().max(500),
-      phone_number: Joi.string().max(9),
-      brith_date: Joi.date(),
+      username: Joi.string().max(30).allow(''),
+      email: Joi.string().email().max(50).allow(''),
+      firstName: Joi.string().max(50).allow(''),
+      lastName: Joi.string().max(50).allow(''),
+      location: Joi.string().max(100).allow(''),
+      bio: Joi.string().max(500).allow(''),
+      phone: Joi.string().max(9).allow(''),
+      brithDate: Joi.date().allow(''),
     });
 
     await schema.validateAsync(data);
@@ -210,8 +246,8 @@ async function deleteImage(req, res, next) {
 }
 
 module.exports = {
-  isCorrectUser,
   getUsers,
+  getUserById,
   registerUser,
   userLogin,
   updateProfile,
