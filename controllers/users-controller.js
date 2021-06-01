@@ -72,7 +72,7 @@ async function registerUser(req, res, next) {
       user: {
         id: createdUser.id,
         username: createdUser.username,
-        id: createdUser.email,
+        email: createdUser.email,
         fristName: createdUser.firstName,
         lastName: createdUser.lastName,
         location: createdUser.location,
@@ -123,10 +123,10 @@ async function userLogin(req, res, next) {
     });
 
     res.send({
-      user: {
+      userData: {
         id: loggedUser.id,
         username: loggedUser.username,
-        id: loggedUser.email,
+        email: loggedUser.email,
         fristName: loggedUser.firstName,
         lastName: loggedUser.lastName,
         location: loggedUser.location,
@@ -166,7 +166,18 @@ async function updateProfile(req, res, next) {
     const user = await usersRepository.updateProfile(data, id);
 
     res.status(201);
-    res.send(user);
+    res.send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fristName: user.firstName,
+      lastName: user.lastName,
+      location: user.location,
+      bio: user.bio,
+      image: user.image,
+      phoneNumber: user.phone_number,
+      birthDate: user.birth_date,
+    });
   } catch (error) {
     next(error);
   }
@@ -225,7 +236,18 @@ async function updateImage(req, res, next) {
     const user = await usersRepository.updateImage(req.auth.id, req.file.path);
 
     res.status(201);
-    res.send(user);
+    res.send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      fristName: user.firstName,
+      lastName: user.lastName,
+      location: user.location,
+      bio: user.bio,
+      image: user.image,
+      phoneNumber: user.phone_number,
+      birthDate: user.birth_date,
+    });
   } catch (error) {
     next(error);
   }
@@ -239,7 +261,9 @@ async function deleteImage(req, res, next) {
     const user = await usersRepository.deleteImage(id);
 
     res.status(201); // correct status: 204
-    res.send(user);
+    res.send({
+      image: user.image,
+    });
   } catch (error) {
     next(error);
   }
