@@ -72,7 +72,7 @@ async function registerUser(req, res, next) {
       user: {
         id: createdUser.id,
         username: createdUser.username,
-        id: createdUser.email,
+        email: createdUser.email,
         fristName: createdUser.firstName,
         lastName: createdUser.lastName,
         location: createdUser.location,
@@ -123,10 +123,10 @@ async function userLogin(req, res, next) {
     });
 
     res.send({
-      user: {
+      userData: {
         id: loggedUser.id,
         username: loggedUser.username,
-        id: loggedUser.email,
+        email: loggedUser.email,
         fristName: loggedUser.firstName,
         lastName: loggedUser.lastName,
         location: loggedUser.location,
