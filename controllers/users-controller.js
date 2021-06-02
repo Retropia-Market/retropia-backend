@@ -69,12 +69,12 @@ async function registerUser(req, res, next) {
 
     res.status(201);
     res.send({
-      user: {
+      userData: {
         id: createdUser.id,
         username: createdUser.username,
         email: createdUser.email,
-        firstName: createdUser.firstName,
-        lastName: createdUser.lastName,
+        firstName: createdUser.firstname,
+        lastName: createdUser.lastname,
         location: createdUser.location,
         bio: createdUser.bio,
         image: createdUser.image,
@@ -127,8 +127,8 @@ async function userLogin(req, res, next) {
         id: loggedUser.id,
         username: loggedUser.username,
         email: loggedUser.email,
-        firstName: loggedUser.firstName,
-        lastName: loggedUser.lastName,
+        firstName: loggedUser.firstname,
+        lastName: loggedUser.lastname,
         location: loggedUser.location,
         bio: loggedUser.bio,
         image: loggedUser.image,
@@ -170,8 +170,8 @@ async function updateProfile(req, res, next) {
       id: user.id,
       username: user.username,
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstname,
+      lastName: user.lastname,
       location: user.location,
       bio: user.bio,
       image: user.image,
@@ -222,7 +222,10 @@ async function updatePassword(req, res, next) {
     user = await usersRepository.updatePassword(hashedPassword, id);
 
     res.status(201);
-    res.send(user);
+    res.send({
+      user: user.username,
+      res: 'Password changed',
+    });
   } catch (error) {
     next(error);
   }
@@ -240,8 +243,8 @@ async function updateImage(req, res, next) {
       id: user.id,
       username: user.username,
       email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user.firstname,
+      lastName: user.lastname,
       location: user.location,
       bio: user.bio,
       image: user.image,
@@ -262,7 +265,16 @@ async function deleteImage(req, res, next) {
 
     res.status(201); // correct status: 204
     res.send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      firstName: user.firstname,
+      lastName: user.lastname,
+      location: user.location,
+      bio: user.bio,
       image: user.image,
+      phoneNumber: user.phone_number,
+      birthDate: user.birth_date,
     });
   } catch (error) {
     next(error);
