@@ -240,6 +240,17 @@ app.get('/rawg/search/:game', gamesApiController.getRawgVideoGameInfo);
 
 app.get('/rawg/platform/', gamesApiController.getRawgConsoleInfo);
 
+app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
+
+//TODO - Finish vision
+
+app.post(
+    '/sell/vision/',
+    validateAuthorization,
+    uploadProductImage.single('image'),
+    gamesApiController.getGoogleVision
+);
+
 // ERROR HANDLER *********************************************************************************************************
 
 app.use(async (err, req, res, next) => {
