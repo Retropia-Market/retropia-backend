@@ -246,6 +246,7 @@ app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
 
 app.post(
     '/sell/vision/',
+    validateAuthorization,
     uploadProductImage.single('image'),
     gamesApiController.getGoogleVision
 );
