@@ -38,8 +38,8 @@ const getGoogleVision = async (req, res, next) => {
             keyFilename: './key.json',
         });
         const { file } = req;
-        const [result] = await client.labelDetection(file);
-        const detection = result.labelAnnotations;
+        const [result] = await client.objectLocalization(file.path);
+        const detection = result.localizedObjectAnnotations;
         res.send(detection);
     } catch (err) {
         next(err);

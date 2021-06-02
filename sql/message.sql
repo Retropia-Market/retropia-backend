@@ -110,7 +110,7 @@ CREATE TABLE `products_has_subcategory` (
     PRIMARY KEY (`id`)
 );
   
-INSERT INTO categories (name) VALUES ('Sony'), ('Nintendo'), ('Microsoft'), ('Atari'), ('Sega');
+INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega');
 
-INSERT INTO sub_categories (name, category_id) VALUES ('PlayStation 1', 1), ('PlayStation 2', 1), ('PlayStation 3', 1), ('Xbox 360', 3), ('Xbox One', 3), ('Xbox', 3), ('NES', 2), ('Gameboy Pocket', 2), ('Gameboy Color', 2),
- ('Gameboy Advance', 2), ('DS', 2), ('DS Lite', 2) , ('Nintendo 64', 2), ('Gamecube', 2);
+INSERT INTO sub_categories (name, category_id) VALUES ('playstation', 1), ('playstation 2', 1), ('playstation 3', 1), ('xbox 360', 3), ('xbox one', 3), ('xbox', 3), ('nes', 2), ('gameboy pocket', 2), ('gameboy color', 2),
+ ('gameboy advance', 2), ('ds', 2), ('ds lite', 2) , ('nintendo 64', 2), ('gamecube', 2);
