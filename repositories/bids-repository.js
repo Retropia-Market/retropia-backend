@@ -1,5 +1,6 @@
-const { database } = require('../infrastructure');
 const { format } = require('date-fns');
+
+const { database } = require('../infrastructure');
 
 async function placeBid(userId, productId, bidPrice, message) {
   try {
@@ -97,6 +98,18 @@ async function acceptBid(bidId) {
   }
 }
 
+async function declineBid(bidId) {
+  try {
+    const query = 'UPDATE bids SET bid_status = "rechazado" WHERE id = ?';
+    await database.pool.query(query, bidId);
+    const bid = getBidById(bidId);
+
+    return bid;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 module.exports = {
   placeBid,
   checkBidData,
@@ -107,4 +120,5 @@ module.exports = {
   getUserBidsById,
   getProductsBidsById,
   acceptBid,
+  declineBid,
 };
