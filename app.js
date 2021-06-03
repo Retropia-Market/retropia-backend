@@ -215,6 +215,13 @@ app.patch(
   bidsController.acceptBid
 );
 
+// Rechazar Oferta by ID
+app.patch(
+  '/products/bid/:bidId/decline',
+  validateAuthorization,
+  bidsController.declineBid
+);
+
 // Eliminar Oferta
 app.delete(
   '/products/bid/:bidId/delete',
@@ -245,10 +252,10 @@ app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
 //TODO - Finish vision
 
 app.post(
-    '/sell/vision/',
-    validateAuthorization,
-    uploadProductImage.single('image'),
-    gamesApiController.getGoogleVision
+  '/sell/vision/',
+  validateAuthorization,
+  uploadProductImage.single('image'),
+  gamesApiController.getGoogleVision
 );
 
 // ERROR HANDLER *********************************************************************************************************

@@ -21,12 +21,13 @@ const getReviewByProductId = async (id) => {
  * @param {string} productId id del producto sobre el que comentar
  * @returns JSON con la info de la review creada
  */
-const addReviewToProduct = async (data, productId) => {
+const addReviewToProduct = async (data, userId, productId) => {
   const addReviewToProductQuery =
-    'UPDATE products SET review_rating = ?, review_text = ?, review_date = curdate() WHERE id = ?';
+    'UPDATE products SET review_rating = ?, review_text = ?, review_date = curdate(), reviewer_id=? WHERE id = ?';
   await database.pool.query(addReviewToProductQuery, [
     data.review_rating,
     data.review_text,
+    userId,
     productId,
   ]);
   const reviewDone = await getReviewByProductId(productId);
@@ -74,11 +75,10 @@ const deleteReview = async (productId) => {
  * @returns {number | string} valoracion media del usuario
  */
 const getAvgReviewScoreByUser = async (userId) => {
-    const queryGetRating =
-        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
-    const [result] = await database.pool.query(queryGetRating, userId);
-    return result[0];
-
+  const queryGetRating =
+    'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
+  const [result] = await database.pool.query(queryGetRating, userId);
+  return result[0];
 };
 
 module.exports = {
