@@ -6,13 +6,13 @@ const { database } = require('../infrastructure');
  * @returns JSON con la info de la review
  */
 const getReviewByProductId = async (id) => {
-  const getReviewByProductQuery =
-    'SELECT products.review_rating, products.review_text, products.review_date FROM products WHERE id = ?';
-  const [getReviewbyProductData] = await database.pool.query(
-    getReviewByProductQuery,
-    id
-  );
-  return getReviewbyProductData;
+    const getReviewByProductQuery =
+        'SELECT * FROM reviews WHERE product_id = ?';
+    const [getReviewbyProductData] = await database.pool.query(
+        getReviewByProductQuery,
+        [id]
+    );
+    return getReviewbyProductData[0];
 };
 
 /**
@@ -21,16 +21,17 @@ const getReviewByProductId = async (id) => {
  * @param {string} productId id del producto sobre el que comentar
  * @returns JSON con la info de la review creada
  */
-const addReviewToProduct = async (data, productId) => {
-  const addReviewToProductQuery =
-    'UPDATE products SET review_rating = ?, review_text = ?, review_date = curdate() WHERE id = ?';
-  await database.pool.query(addReviewToProductQuery, [
-    data.review_rating,
-    data.review_text,
-    productId,
-  ]);
-  const reviewDone = await getReviewByProductId(productId);
-  return reviewDone;
+const addReviewToProduct = async (data, productId, userId) => {
+    const addReviewToProductQuery =
+        'INSERT INTO reviews (product_id, user_id, review_rating, review_text, review_date) VALUES (?, ?, ?, ?, curdate())';
+    await database.pool.query(addReviewToProductQuery, [
+        productId,
+        userId,
+        data.review_rating,
+        data.review_text,
+    ]);
+    const reviewDone = await getReviewByProductId(productId);
+    return reviewDone;
 };
 
 /**
@@ -40,16 +41,16 @@ const addReviewToProduct = async (data, productId) => {
  * @returns JSON con la info de la review actualizada
  */
 const updateReview = async (data, productId) => {
-  //TODO - DEFINE FUNC
-  const updateReviewToProductQuery =
-    'UPDATE products SET review_rating = ?, review_text = ? WHERE id = ?';
-  await database.pool.query(updateReviewToProductQuery, [
-    data.review_rating,
-    data.review_text,
-    productId,
-  ]);
-  const reviewDone = await getReviewByProductId(productId);
-  return reviewDone;
+    //TODO - DEFINE FUNC
+    const updateReviewToProductQuery =
+        'UPDATE reviews SET review_rating = ?, review_text = ? WHERE product_id = ?';
+    await database.pool.query(updateReviewToProductQuery, [
+        data.review_rating,
+        data.review_text,
+        productId,
+    ]);
+    const reviewDone = await getReviewByProductId(productId);
+    return reviewDone;
 };
 
 /**
@@ -57,15 +58,8 @@ const updateReview = async (data, productId) => {
  * @param {string} productId id del producto objetivo
  */
 const deleteReview = async (productId) => {
-  const deleteRev = null;
-  const addReviewToProductQuery =
-    'UPDATE products SET review_rating = ?, review_text = ?, review_date = ? WHERE id = ?';
-  await database.pool.query(addReviewToProductQuery, [
-    deleteRev,
-    deleteRev,
-    deleteRev,
-    productId,
-  ]);
+    const deleteReviewQuery = 'DELETE FROM reviews where product_id = ?';
+    await database.pool.query(deleteReviewQuery, [productId]);
 };
 
 /**
@@ -75,16 +69,15 @@ const deleteReview = async (productId) => {
  */
 const getAvgReviewScoreByUser = async (userId) => {
     const queryGetRating =
-        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, seller_id FROM products WHERE seller_id = ?';
+        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, user_id FROM reviews WHERE user_id = ?';
     const [result] = await database.pool.query(queryGetRating, userId);
     return result[0];
-
 };
 
 module.exports = {
-  getReviewByProductId,
-  addReviewToProduct,
-  updateReview,
-  deleteReview,
-  getAvgReviewScoreByUser,
+    getReviewByProductId,
+    addReviewToProduct,
+    updateReview,
+    deleteReview,
+    getAvgReviewScoreByUser,
 };

@@ -13,7 +13,7 @@ const getReviewByProductId = async (req, res, next) => {
         const schema = Joi.number().min(1).positive();
         await schema.validateAsync(id);
         const getReview = await reviewsRepository.getReviewByProductId(id);
-        if (!getReview.review_rating) {
+        if (!getReview) {
             const noReviewError = new Error(
                 'Este artículo todavía no tiene reviews'
             );
@@ -50,23 +50,27 @@ const addReviewToProduct = async (req, res, next) => {
             userId
         );
 
-        if (!productBid || productBid.bid_status != 'aceptado') {
-            const noUserError = new Error(
-                'No tienes permisos para realizar esta acción'
-            );
-            noUserError.code = '403';
-            throw noUserError;
-        }
+        // if (!productBid || productBid.bid_status != 'aceptado') {
+        //     const noUserError = new Error(
+        //         'No tienes permisos para realizar esta acción'
+        //     );
+        //     noUserError.code = '403';
+        //     throw noUserError;
+        // }
 
-        if (getProduct.sale_status != 'vendido') {
-            const noSoldYetError = new Error(
-                'Tu oferta no ha sido aceptada todavia'
-            );
-            noSoldYetError.code = '403';
-            throw noSoldYetError;
-        }
+        // if (getProduct.sale_status != 'vendido') {
+        //     const noSoldYetError = new Error(
+        //         'Tu oferta no ha sido aceptada todavia'
+        //     );
+        //     noSoldYetError.code = '403';
+        //     throw noSoldYetError;
+        // }
 
-        const review = await reviewsRepository.addReviewToProduct(req.body, id);
+        const review = await reviewsRepository.addReviewToProduct(
+            req.body,
+            id,
+            userId
+        );
         res.send(review);
     } catch (error) {
         next(error);
@@ -95,21 +99,21 @@ const updateReview = async (req, res, next) => {
             userId
         );
 
-        if (!productBid || productBid.bid_status != 'aceptado') {
-            const noUserError = new Error(
-                'No tienes permisos para realizar esta acción'
-            );
-            noUserError.code = '403';
-            throw noUserError;
-        }
+        // if (!productBid || productBid.bid_status != 'aceptado') {
+        //     const noUserError = new Error(
+        //         'No tienes permisos para realizar esta acción'
+        //     );
+        //     noUserError.code = '403';
+        //     throw noUserError;
+        // }
 
-        if (getProduct.sale_status != 'vendido') {
-            const noSoldYetError = new Error(
-                'Tu oferta no ha sido aceptada todavia'
-            );
-            noSoldYetError.code = '403';
-            throw noSoldYetError;
-        }
+        // if (getProduct.sale_status != 'vendido') {
+        //     const noSoldYetError = new Error(
+        //         'Tu oferta no ha sido aceptada todavia'
+        //     );
+        //     noSoldYetError.code = '403';
+        //     throw noSoldYetError;
+        // }
 
         const review = await reviewsRepository.updateReview(req.body, id);
         res.send(review);
@@ -136,21 +140,21 @@ const deleteReview = async (req, res, next) => {
             userId
         );
 
-        if (!productBid || productBid.bid_status != 'aceptado') {
-            const noUserError = new Error(
-                'No tienes permisos para realizar esta acción'
-            );
-            noUserError.code = '403';
-            throw noUserError;
-        }
+        // if (!productBid || productBid.bid_status != 'aceptado') {
+        //     const noUserError = new Error(
+        //         'No tienes permisos para realizar esta acción'
+        //     );
+        //     noUserError.code = '403';
+        //     throw noUserError;
+        // }
 
-        if (getProduct.sale_status != 'vendido') {
-            const noSoldYetError = new Error(
-                'Tu oferta no ha sido aceptada todavia'
-            );
-            noSoldYetError.code = '403';
-            throw noSoldYetError;
-        }
+        // if (getProduct.sale_status != 'vendido') {
+        //     const noSoldYetError = new Error(
+        //         'Tu oferta no ha sido aceptada todavia'
+        //     );
+        //     noSoldYetError.code = '403';
+        //     throw noSoldYetError;
+        // }
 
         await reviewsRepository.deleteReview(id);
         res.status(201);
