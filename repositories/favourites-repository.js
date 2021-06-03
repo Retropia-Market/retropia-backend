@@ -1,4 +1,5 @@
 const { database } = require('../infrastructure');
+const { getSingleProduct } = require('./products-repository');
 
 /**############################################################################
  *
@@ -55,7 +56,13 @@ async function removeFavourite(userId, productId) {
 
 async function getUserFavourites(userId) {
   const query = 'SELECT * FROM favourites WHERE user_id = ?';
-  const [favourites] = await database.pool.query(query, userId);
+  const [favouritesData] = await database.pool.query(query, userId);
+  const favourites = [];
+
+  for (const favourite of favouritesData) {
+    const product = await getSingleProduct(favourite.product_id);
+    favourites.push(product);
+  }
 
   return favourites;
 }
