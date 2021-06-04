@@ -29,9 +29,6 @@ CREATE TABLE `products` (
     `sale_status` VARCHAR(255) DEFAULT 'disponible',
     `description` TEXT(500) DEFAULT NULL,
     `sale_date` DATE DEFAULT NULL,
-    `review_rating` INT DEFAULT NULL,
-    `review_text` TEXT(500) DEFAULT NULL,
-    `review_date` DATE DEFAULT NULL,
     `views` INT DEFAULT 0,
     FOREIGN KEY (seller_id)
     REFERENCES users(id)
@@ -45,6 +42,22 @@ CREATE TABLE `products_img` (
     `url` VARCHAR(100) NOT NULL,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
+    ON DELETE CASCADE,
+    PRIMARY KEY (`id`)
+);
+
+  CREATE TABLE `reviews` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `product_id` INT NOT NULL UNIQUE,
+    `review_rating` INT DEFAULT NULL,
+    `review_text` TEXT(500) DEFAULT NULL,
+    `review_date` DATE DEFAULT NULL,
+    `user_id` INT NOT NULL,
+    FOREIGN KEY (product_id)
+    REFERENCES products(id)
+    ON DELETE CASCADE,
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
     ON DELETE CASCADE,
     PRIMARY KEY (`id`)
 );
