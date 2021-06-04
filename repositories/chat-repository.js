@@ -2,15 +2,15 @@ const { database } = require('../infrastructure');
 
 const getContacts = async (userId) => {
     const query =
-        'SELECT products.id AS product_id, products.seller_id, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id, users.username as reviewer_name FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = reviews.user_id WHERE products.seller_id = ?';
-    const [result] = await database.pool.query(query, userId);
+        'SELECT contacts.*, U1.username AS username1, U2.username AS username2 FROM contacts JOIN users AS U1 ON U1.id = contacts.user_id_1 JOIN users AS U2 ON U2.id = contacts.user_id_2 WHERE user_id_1 = ? OR user_id_2 = ?';
+    const [result] = await database.pool.query(query, [userId, userId]);
     return result;
 };
 
 const getLastMessages = (userId) => {
     const query =
-        'SELECT * from message WHERE src_id = ? OR dst_id = ? ORDER BY id DESC';
-    const [result] = await database.pool.query(query, userId);
+        'SELECT * FROM ( SELECT message.*, (ROW_NUMBER() OVER( PARTITION BY case when message.src_id > message.dst_id then concat(message.dst_id, message.src_id) else concat(message.src_id, message.dst_id) end ORDER BY id DESC)) as `rank` FROM message WHERE message.src_id = ? OR dst_id = ? ) message WHERE `rank` = 1';
+    const [result] = await database.pool.query(query, [userId, userId]);
     return result;
 };
 
