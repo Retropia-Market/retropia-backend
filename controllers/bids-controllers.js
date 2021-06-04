@@ -97,8 +97,8 @@ async function declineBid(req, res, next) {
       throw err;
     }
 
-    if (bidAccepted.bid_status === 'rechazado') {
-      const err = new Error('Esta oferta ya se encuentra rechazada');
+    if (bid.bid_status === ('rechazado' || 'aceptado')) {
+      const err = new Error('Esta oferta ya se ha respondido');
       err.code = 409;
       throw err;
     }
