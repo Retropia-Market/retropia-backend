@@ -13,6 +13,7 @@ const {
     favouritesController,
     categoriesController,
     gamesApiController,
+    chatController,
 } = require('./controllers');
 
 const {
@@ -255,9 +256,11 @@ app.get('/categories/', categoriesController.getCategories);
 
 // CHAT ****************************************************************************************************************
 
-app.get('/chats', validateAuthorization);
+//Get contacts with lastMessage
 
-app.get('/chats/:id', validateAuthorization);
+app.get('/chats', validateAuthorization, chatController.getContacts);
+
+app.get('/chats/:id', validateAuthorization, chatController.getMessages);
 
 app.post('/chats/:id', validateAuthorization);
 

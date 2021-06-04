@@ -127,13 +127,13 @@ CREATE TABLE `products_has_subcategory` (
 
 
 
-CREATE TABLE message(
-  id int NOT NULL AUTO_INCREMENT,
-  src_id INT NOT NULL ,
-  dst_id INT NOT NULL ,
-  message text not null,
-  date TIMESTAMP NOT NULL ,
-  status int not null default 0,
+CREATE TABLE `message`(
+  `id` int NOT NULL AUTO_INCREMENT,
+  `src_id` INT NOT NULL ,
+  `dst_id` INT NOT NULL ,
+  `message` text not null,
+  `date` TIMESTAMP NOT NULL ,
+  `status` int not null default 0,
   FOREIGN KEY (src_id)
   REFERENCES users(id)
   ON DELETE CASCADE,
@@ -141,6 +141,19 @@ CREATE TABLE message(
   REFERENCES users(id),
   PRIMARY KEY (`id`)
 );
+
+CREATE TABLE `contacts`(
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id_1` INT NOT NULL ,
+  `user_id_2` INT NOT NULL ,
+  FOREIGN KEY (user_id_1)
+  REFERENCES users(id)
+  ON DELETE CASCADE,
+  FOREIGN KEY (user_id_2)
+  REFERENCES users(id),
+  PRIMARY KEY (`id`)
+);
+
 
 
 INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega'), ('pc');

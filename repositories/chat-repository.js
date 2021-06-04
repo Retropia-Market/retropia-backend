@@ -7,7 +7,7 @@ const getContacts = async (userId) => {
     return result;
 };
 
-const getLastMessages = (userId) => {
+const getLastMessages = async (userId) => {
     const query =
         'SELECT * FROM ( SELECT message.*, (ROW_NUMBER() OVER( PARTITION BY case when message.src_id > message.dst_id then concat(message.dst_id, message.src_id) else concat(message.src_id, message.dst_id) end ORDER BY id DESC)) as `rank` FROM message WHERE message.src_id = ? OR dst_id = ? ) message WHERE `rank` = 1';
     const [result] = await database.pool.query(query, [userId, userId]);
@@ -20,22 +20,31 @@ const getContact = async (userId) => {
     return result[0];
 };
 
-const addContact = async (userIdLogged, userIdVisited) => {
+const addContact = async (userId, targetUserId) => {
     const query = 'INSERT INTO contacts(user_id_1, user_id_2) VALUES (?,?)';
+    const [result] = await database.pool.query(query, [userId, targetUserId]);
+    return result;
+};
+
+const addMessage = async (message, userId, targetUserId) => {
+    const query =
+        'INSERT INTO message(message, src_id, dst_id, date) VALUES (?,?, ?, curtime())';
     const [result] = await database.pool.query(query, [
-        userIdLogged,
-        userIdVisited,
+        message,
+        userId,
+        targetUserId,
     ]);
     return result;
 };
 
-const addMessage = async (message, userIdLogged, userIdVisited) => {
+const getMessages = async (userId, targetUserId) => {
     const query =
-        'INSERT INTO message(message, src_id, dst_id, date) VALUES (?,?, ?, curdate())';
+        'SELECT * FROM message where (src_id = ? AND dst_id = ?) OR (dst_id = ? AND src_id = ?) ORDER BY date ASC';
     const [result] = await database.pool.query(query, [
-        message,
-        userIdLogged,
-        userIdVisited,
+        userId,
+        targetUserId,
+        userId,
+        targetUserId,
     ]);
     return result;
 };
@@ -46,4 +55,5 @@ module.exports = {
     getLastMessages,
     addContact,
     addMessage,
+    getMessages,
 };
