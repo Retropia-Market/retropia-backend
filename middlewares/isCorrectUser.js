@@ -6,9 +6,9 @@ const { findUserById } = require('../repositories/users-repository');
  * @param {string} reqParam id del usuario en la ruta como req.param
  * @param {string} reqAuth id del usuario extraido del JWT
  */
-function isCorrectUser(reqParam, reqAuth) {
+async function isCorrectUser(reqParam, reqAuth) {
   // Comprobar que el usuario con id del req param existe
-  const user = findUserById(reqParam);
+  const user = await findUserById(reqParam);
   if (!user) {
     const err = new Error('No existe usuario con ese email');
     err.code = 401;
