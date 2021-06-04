@@ -62,6 +62,8 @@ CREATE TABLE `products_img` (
     PRIMARY KEY (`id`)
 );
 
+
+
   CREATE TABLE `bids` (
     `id` int NOT NULL AUTO_INCREMENT,
     `product_id` INT NOT NULL,
@@ -122,7 +124,25 @@ CREATE TABLE `products_has_subcategory` (
     ON DELETE CASCADE,
     PRIMARY KEY (`id`)
 );
-  
+
+
+
+CREATE TABLE message(
+  id int NOT NULL AUTO_INCREMENT,
+  src_id INT NOT NULL ,
+  dst_id INT NOT NULL ,
+  message text not null,
+  date TIMESTAMP NOT NULL ,
+  status int not null default 0,
+  FOREIGN KEY (src_id)
+  REFERENCES users(id)
+  ON DELETE CASCADE,
+  FOREIGN KEY (dst_id)
+  REFERENCES users(id),
+  PRIMARY KEY (`id`)
+);
+
+
 INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega'), ('pc');
 
 INSERT INTO sub_categories (name, category_id) VALUES ('playstation', 1), ('ps vita', 1), ('psp', 1),('playstation 2', 1), ('playstation 3', 1), ('xbox 360', 3), ('xbox one', 3), ('xbox', 3), ('nes', 2), ('game boy', 2), ('game boy color', 2),

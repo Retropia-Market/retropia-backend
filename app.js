@@ -253,6 +253,14 @@ app.patch(
 // Get subcategories with categories
 app.get('/categories/', categoriesController.getCategories);
 
+// CHAT ****************************************************************************************************************
+
+app.get('/chats', validateAuthorization);
+
+app.get('/chats/:id', validateAuthorization);
+
+app.post('/chats/:id', validateAuthorization);
+
 //EXTERNAL APIS
 
 app.get('/rawg/search/:game', gamesApiController.getRawgVideoGameInfo);

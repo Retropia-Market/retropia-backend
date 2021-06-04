@@ -5,6 +5,7 @@ const bidsController = require('./bids-controllers');
 const favouritesController = require('./favourites-controller');
 const categoriesController = require('./categories-controller');
 const gamesApiController = require('./gamesapi-controller');
+const chatController = require('./chat-controller');
 
 module.exports = {
     usersController,
@@ -14,4 +15,5 @@ module.exports = {
     favouritesController,
     categoriesController,
     gamesApiController,
+    chatController,
 };
