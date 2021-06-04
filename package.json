@@ -22,7 +22,8 @@
     "jsonwebtoken": "^8.5.1",
     "multer": "^1.4.2",
     "mysql2": "^2.2.5",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "ws": "^7.4.6"
   },
   "directories": {
     "doc": "docs"
