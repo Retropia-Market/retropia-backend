@@ -26,7 +26,7 @@ async function getBidsByProductId(productId) {
 async function getBidById(bidId) {
   try {
     const query = `SELECT * FROM bids WHERE id='${bidId}';`;
-    const [[bids]] = await database.pool.query(query);
+    const [bids] = await database.pool.query(query);
     return bids;
   } catch (error) {
     console.log(error);
@@ -78,6 +78,17 @@ async function getUserBidsById(userId) {
   }
 }
 
+async function getUserReceivedBidsBySellerId(userId) {
+  try {
+    const query = `SELECT bids.* FROM bids INNER JOIN products ON bids.product_id = products.id WHERE products.seller_id = '${userId}';`;
+    const [user_bids] = await database.pool.query(query);
+    console.log(user_bids);
+    return user_bids;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getProductsBidsById(productId) {
   try {
     const query = `SELECT * FROM bids WHERE product_id = '${productId}';`;
@@ -119,6 +130,7 @@ module.exports = {
   getBidsByProductId,
   modifyBid,
   getUserBidsById,
+  getUserReceivedBidsBySellerId,
   getProductsBidsById,
   acceptBid,
   declineBid,

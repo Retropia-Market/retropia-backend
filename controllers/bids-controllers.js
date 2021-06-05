@@ -184,6 +184,16 @@ async function getUserBidsById(req, res, next) {
   }
 }
 
+async function getUserReceivedBidsBySellerId(req, res, next) {
+  try {
+    const { userId } = req.params;
+    const bids = await bidsRepository.getUserReceivedBidsBySellerId(userId);
+    res.send({ bids });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function getProductsBidsById(req, res, next) {
   try {
     const { productId } = req.params;
@@ -202,4 +212,5 @@ module.exports = {
   modifyBidById,
   getUserBidsById,
   getProductsBidsById,
+  getUserReceivedBidsBySellerId,
 };
