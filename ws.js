@@ -55,7 +55,6 @@ const init = (server) => {
           send(message);
         }
       }
-      S;
     });
     socket.on('close', () => {
       const uid = socket.auth?.uid;
