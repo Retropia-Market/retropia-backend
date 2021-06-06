@@ -1,12 +1,19 @@
-const { startOfHour } = require('date-fns/esm');
 const { isSchema } = require('joi');
 const Joi = require('joi');
 
-const { chatRepository } = require('../repositories');
+const { chatRepository, usersRepository } = require('../repositories');
 
 const getContacts = async (req, res, next) => {
   try {
     const { id } = req.auth;
+    const { userId } = req.params;
+
+    if (Number(userId) !== id) {
+      const err = new Error('No tienes los permisos para esta accion');
+      err.code = 401;
+      throw err;
+    }
+
     const users = await chatRepository.getContacts(id);
     const messages = await chatRepository.getLastMessages(id);
     const contact = users.map((user) => {
@@ -42,7 +49,7 @@ const getMessages = async (req, res, next) => {
       throw err;
     }
 
-    if (target === id) {
+    if (source === target) {
       const err = new Error('Chat no encontrado');
       err.code = 404;
       throw err;
@@ -116,22 +123,31 @@ const addMessage = async (req, res, next) => {
       throw err;
     }
 
+    const targetUser = await usersRepository.findUserById(target);
+    if (!targetUser) {
+      const err = new Error('Usuario no encontrado');
+      err.code = 404;
+      throw err;
+    }
+
     if (target === source) {
       const err = new Error('No puedes enviarte un mensaje a ti mismo');
       err.code = 403;
       throw err;
     }
 
-    const messageSchema = Joi.object({
-      message: Joi.string().required(),
-    });
+    const messageSchema = Joi.string().required();
     await messageSchema.validateAsync(message);
 
     const sourceContacts = await chatRepository.getContacts(source);
-    const targetContacts = await chatRepository.getContacts(source);
+    const targetContacts = await chatRepository.getContacts(target);
 
-    const sourceHasContact = sourceContacts.some((c) => c.user_id_2 === target);
-    const targetHasContact = targetContacts.some((c) => c.user_id_2 === source);
+    const sourceHasContact = sourceContacts.some(
+      (c) => c.user_id_2 === Number(target)
+    );
+    const targetHasContact = targetContacts.some(
+      (c) => c.user_id_2 === Number(source)
+    );
 
     !sourceHasContact
       ? await chatRepository.addContact(source, target)
@@ -140,7 +156,7 @@ const addMessage = async (req, res, next) => {
       ? await chatRepository.addContact(target, source)
       : targetContacts;
 
-    await chatRepository.addMessage(message, source, target);
+    await chatRepository.addMessage(message, Number(source), Number(target));
     const updatedMessages = await chatRepository.getMessages(source, target);
 
     res.status(201);

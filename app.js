@@ -1,9 +1,8 @@
-require('dotenv').config();
-const path = require('path');
-const fs = require('fs');
-const express = require('express');
-const { v4: uuidv4, validate } = require('uuid');
 const cors = require('cors');
+const http = require('http');
+const ws = require('./ws');
+const express = require('express');
+const path = require('path');
 
 const {
   usersController,

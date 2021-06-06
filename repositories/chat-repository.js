@@ -1,9 +1,12 @@
 const { database } = require('../infrastructure');
 
 const getContacts = async (userId) => {
+  // const query =
+  //   'SELECT contacts.*, U1.username AS username1, U2.username AS username2 FROM contacts JOIN users AS U1 ON U1.id = contacts.user_id_1 JOIN users AS U2 ON U2.id = contacts.user_id_2 WHERE user_id_1 = ? OR user_id_2 = ?';
+  // const [result] = await database.pool.query(query, [userId, userId]);
   const query =
-    'SELECT contacts.*, U1.username AS username1, U2.username AS username2 FROM contacts JOIN users AS U1 ON U1.id = contacts.user_id_1 JOIN users AS U2 ON U2.id = contacts.user_id_2 WHERE user_id_1 = ? OR user_id_2 = ?';
-  const [result] = await database.pool.query(query, [userId, userId]);
+    'SELECT contacts.*, U1.username AS username1, U2.username AS username2, U2.image AS username2_image FROM contacts JOIN users AS U1 ON U1.id = contacts.user_id_1 JOIN users AS U2 ON U2.id = contacts.user_id_2 WHERE user_id_1 = ?';
+  const [result] = await database.pool.query(query, userId);
   return result;
 };
 
@@ -28,11 +31,11 @@ const addContact = async (userId, targetUserId) => {
 
 const addMessage = async (message, userId, targetUserId) => {
   const query =
-    'INSERT INTO message(message, src_id, dst_id, date) VALUES (?,?, ?, curtime())';
+    'INSERT INTO message(src_id, dst_id, message, date) VALUES (?,?,?, curtime())';
   const [result] = await database.pool.query(query, [
-    message,
     userId,
     targetUserId,
+    message,
   ]);
   return result;
 };
