@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const ws = require('ws');
 const { chatController } = require('./controllers');
-const { deleteBidById } = require('./controllers/bids-controllers');
 const secret = process.env.JWT_SECRET;
 
 // State

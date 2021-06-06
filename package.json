@@ -4,6 +4,7 @@
   "main": "controllers.js",
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --silent",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [],
