@@ -4,6 +4,7 @@
   "main": "controllers.js",
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --silent",
+    "dev": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [],
@@ -14,7 +15,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "date-fns": "^2.21.1",
+    "date-fns": "^2.22.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fs": "*",

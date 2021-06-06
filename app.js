@@ -1,9 +1,8 @@
-require('dotenv').config();
-const path = require('path');
-const fs = require('fs');
-const express = require('express');
-const { v4: uuidv4, validate } = require('uuid');
 const cors = require('cors');
+const http = require('http');
+const ws = require('./ws');
+const express = require('express');
+const path = require('path');
 
 const {
   usersController,
@@ -265,11 +264,35 @@ app.get('/categories/', categoriesController.getCategories);
 
 //Get contacts with lastMessage
 
-app.get('/chats', validateAuthorization, chatController.getContacts);
+app.get(
+  '/chats/:userId/get-contacts',
+  validateAuthorization,
+  chatController.getContacts
+);
 
-app.get('/chats/:id', validateAuthorization, chatController.getMessages);
+// Get messages between two users
 
-app.post('/chats/:id', validateAuthorization);
+app.get(
+  '/chats/:srcId/get-messages/:dstId',
+  validateAuthorization,
+  chatController.getMessages
+);
+
+// Add user to contacts
+
+app.post(
+  '/chats/:srcId/add-contact/:dstId',
+  validateAuthorization,
+  chatController.addContact
+);
+
+// Send message to user
+
+app.post(
+  '/chats/:srcId/send-message/:dstId/',
+  validateAuthorization,
+  chatController.addMessage
+);
 
 //EXTERNAL APIS
 
