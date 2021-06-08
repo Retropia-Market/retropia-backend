@@ -68,7 +68,7 @@ const init = (server) => {
   });
 };
 
-exports = module.exports = {
+module.exports = {
   init,
   send,
 };

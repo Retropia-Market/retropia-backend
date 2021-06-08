@@ -196,8 +196,6 @@ async function updatePassword(req, res, next) {
       newPassword: Joi.string().min(8).max(20).alphanum().required(),
       repeatedNewPassword: Joi.string().min(8).max(20).alphanum().required(),
     });
-    await schema.validateAsync(data);
-
     // Comprobar que la password antigua es la correcta
     let user = await usersRepository.findUserById(id);
     const isValidPassword = await bcrypt.compare(
