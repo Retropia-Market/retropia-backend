@@ -158,7 +158,7 @@ async function updateProfile(req, res, next) {
       location: Joi.string().max(100).allow(''),
       bio: Joi.string().max(500).allow(''),
       phone: Joi.string().max(9).allow(''),
-      brithDate: Joi.date().allow(''),
+      birthDate: Joi.date().allow(''),
     });
 
     await schema.validateAsync(data);
