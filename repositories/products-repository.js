@@ -51,7 +51,7 @@ const getCatalogue = async (querySearch) => {
     let finalSearch;
     if (querySearch.category) {
         const getCatalogueQuery =
-            'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id WHERE categories.name = ?';
+            'SELECT products.id, products.seller_id, users.username AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id WHERE categories.name = ?';
         const [products] = await database.pool.query(
             getCatalogueQuery,
             querySearch.category
@@ -59,7 +59,7 @@ const getCatalogue = async (querySearch) => {
         finalSearch = products;
     } else if (querySearch.subcategory) {
         const getCatalogueQuery =
-            'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.product_type, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id WHERE sub_categories.name = ?';
+            'SELECT products.id, products.seller_id, users.username AS seller, products.name, products.product_type, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id WHERE sub_categories.name = ?';
         const [products] = await database.pool.query(
             getCatalogueQuery,
             querySearch.subcategory
@@ -67,7 +67,7 @@ const getCatalogue = async (querySearch) => {
         finalSearch = products;
     } else {
         const getCatalogueQuery =
-            'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id';
+            'SELECT products.id, products.seller_id, users.username AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id';
         const [products] = await database.pool.query(getCatalogueQuery);
         finalSearch = products;
     }
@@ -87,7 +87,7 @@ const getCatalogue = async (querySearch) => {
  */
 const getCatalogueByUserId = async (userId) => {
     const getCatalogueByUserIdQuery =
-        'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN users ON products.seller_id = users.id WHERE products.seller_id = ?';
+        'SELECT products.id, products.seller_id, users.username AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN users ON products.seller_id = users.id WHERE products.seller_id = ?';
     const [getData] = await database.pool.query(
         getCatalogueByUserIdQuery,
         userId
@@ -117,7 +117,7 @@ const removeProductById = async (id) => {
  */
 const findProductById = async (id) => {
     const getSingleProduct =
-        'SELECT products.id, products.seller_id, users.firstname as seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views  FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN users ON products.seller_id = users.id WHERE products.id = ?';
+        'SELECT products.id, products.seller_id, users.username as seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views  FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN users ON products.seller_id = users.id WHERE products.id = ?';
     const [product] = await database.pool.query(getSingleProduct, id);
     const images = await findImageById(id);
     if (images && product[0]) product[0].images = [...images];
@@ -240,7 +240,7 @@ const getTopProducts = async () => {
 
 const getSimilarProducts = async (subCatName) => {
     const getRelatedProducts =
-        'SELECT products.id, products.seller_id, products.name, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id WHERE sub_categories.name = ? ORDER BY RAND() LIMIT 4';
+        'SELECT products.id, products.seller_id, products.name , users.username as seller, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON users.id = products.seller_id WHERE sub_categories.name = ? ORDER BY RAND() LIMIT 4';
     const [data] = await database.pool.query(getRelatedProducts, subCatName);
     for (prod of data) {
         const images = await findImageById(prod.id);
