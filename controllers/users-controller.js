@@ -94,7 +94,7 @@ async function userLogin(req, res, next) {
 
     const schema = Joi.object({
       email: Joi.string().email().required(),
-      password: Joi.string().min(8).max(20).alphanum().required(),
+      password: Joi.string().required(),
     });
 
     await schema.validateAsync({ email, password });
@@ -153,12 +153,12 @@ async function updateProfile(req, res, next) {
     const schema = Joi.object({
       username: Joi.string().max(30).allow(''),
       email: Joi.string().email().max(50).allow(''),
-      firstName: Joi.string().max(50).allow(''),
-      lastName: Joi.string().max(50).allow(''),
+      firstname: Joi.string().max(50).allow(''),
+      lastname: Joi.string().max(50).allow(''),
       location: Joi.string().max(100).allow(''),
       bio: Joi.string().max(500).allow(''),
-      phone: Joi.string().max(9).allow(''),
-      birthDate: Joi.date().allow(''),
+      phone_number: Joi.string().max(9).allow(''),
+      birth_date: Joi.string().allow(''),
     });
 
     await schema.validateAsync(data);
@@ -191,11 +191,6 @@ async function updatePassword(req, res, next) {
     // Comprobar que el id es correcto
     isCorrectUser(id, req.auth.id);
 
-    const schema = Joi.object({
-      oldPassword: Joi.string().required(),
-      newPassword: Joi.string().min(8).max(20).alphanum().required(),
-      repeatedNewPassword: Joi.string().min(8).max(20).alphanum().required(),
-    });
     // Comprobar que la password antigua es la correcta
     let user = await usersRepository.findUserById(id);
     const isValidPassword = await bcrypt.compare(
@@ -205,8 +200,17 @@ async function updatePassword(req, res, next) {
     if (!isValidPassword) {
       const err = new Error('La contrasenia actual es incorrecta');
       err.code = 401;
+      err.message = 'La contrasenia actual es incorrecta';
       throw err;
     }
+
+    // validar nueva password
+    const schema = Joi.object({
+      oldPassword: Joi.string().required(),
+      newPassword: Joi.string().min(8).max(20).alphanum().required(),
+      repeatedNewPassword: Joi.string().min(8).max(20).alphanum().required(),
+    });
+    await schema.validateAsync(data);
 
     // Comprobar que las nuevas password nuevas coinciden
     if (data.newPassword !== data.repeatedNewPassword) {
