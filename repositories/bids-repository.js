@@ -114,7 +114,6 @@ async function declineBid(bidId) {
     const query = `UPDATE bids SET bid_status = 'rechazado' WHERE id = ?`;
     await database.pool.query(query, bidId);
     const bid = await getBidById(bidId);
-    console.log('here');
 
     return bid;
   } catch (error) {
