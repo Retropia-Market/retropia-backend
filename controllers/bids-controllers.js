@@ -46,11 +46,14 @@ async function acceptBid(req, res, next) {
   try {
     const { id } = req.auth;
     const { bidId } = req.params;
+
     const bidAccepted = await bidsRepository.getBidById(bidId);
 
     const product = await productsRepository.findProductById(
-      bidAccepted.product_id
+      bidAccepted[0].product_id
     );
+    console.log('Seller');
+    console.log(product.seller_id);
 
     if (id !== product.seller_id) {
       const err = new Error('No tienes permisos para aceptar esta oferta');
@@ -58,13 +61,15 @@ async function acceptBid(req, res, next) {
       throw err;
     }
 
-    if (bidAccepted.bid_status === 'aceptado') {
+    if (bidAccepted[0].bid_status === 'aceptado') {
       const err = new Error('Ya has aceptado la oferta por este producto.');
       err.code = 409;
       throw err;
     }
-    if (bidAccepted.bid_status === 'rechazado') {
-      const err = new Error('Ya has rechazado la oferta por este producto.');
+    if (bidAccepted[0].bid_status === 'rechazado') {
+      const err = new Error(
+        'No puedes aceptar una oferta que rechazaste anteriormente.'
+      );
       err.code = 409;
       throw err;
     }
@@ -74,11 +79,14 @@ async function acceptBid(req, res, next) {
       bidsRepository.declineBid(bid.id);
     }
 
+    console.log(productBids);
+
     await bidsRepository.acceptBid(bidId);
     await productsRepository.updateSaleStatus('vendido', product.id);
 
     res.send({ Status: 'OK', Message: 'Oferta aceptada con exito.' });
   } catch (error) {
+    console.log(error);
     next(error);
   }
 }
@@ -107,7 +115,7 @@ async function declineBid(req, res, next) {
 
     res.send({
       Status: 'OK',
-      Message: 'Oferta rechaza con exito',
+      Message: 'Oferta rechazada con exito',
       updatedBid,
     });
   } catch (error) {
