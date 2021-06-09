@@ -1,8 +1,11 @@
-const Joi = require('joi');
+import { Request, RequestHandler } from 'express';
+import Joi from 'joi';
+import { ErrnoException } from '../models/Error';
 
-const { bidsRepository, productsRepository } = require('../repositories');
+import { bidsRepository, productsRepository } from '../repositories';
 
-async function placeBid(req, res, next) {
+// TODO: REVISAR TIPOS
+const placeBid: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const data = req.body;
@@ -16,12 +19,12 @@ async function placeBid(req, res, next) {
 
     const product = await productsRepository.findProductById(productId);
     if (!product) {
-      const err = new Error('No se ha encontrado el producto');
+      const err: ErrnoException = new Error('No se ha encontrado el producto');
       err.code = 404;
       throw err;
     }
     if (product.seller_id === id) {
-      const err = new Error(
+      const err: ErrnoException = new Error(
         'No puedes hacer ofertas a objetos que te pertenecen'
       );
       err.code = 403;
@@ -30,7 +33,9 @@ async function placeBid(req, res, next) {
 
     const bidExist = await bidsRepository.checkBidData(id, productId);
     if (bidExist.length) {
-      const err = new Error('Ya has ofertado por este producto.');
+      const err: ErrnoException = new Error(
+        'Ya has ofertado por este producto.'
+      );
       err.code = 409;
       throw err;
     }
@@ -40,9 +45,10 @@ async function placeBid(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function acceptBid(req, res, next) {
+// TODO: REVISAR TIPOS
+const acceptBid: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { bidId } = req.params;
@@ -53,18 +59,24 @@ async function acceptBid(req, res, next) {
     );
 
     if (id !== product.seller_id) {
-      const err = new Error('No tienes permisos para aceptar esta oferta');
+      const err: ErrnoException = new Error(
+        'No tienes permisos para aceptar esta oferta'
+      );
       err.code = 401;
       throw err;
     }
 
     if (bidAccepted.bid_status === 'aceptado') {
-      const err = new Error('Ya has aceptado la oferta por este producto.');
+      const err: ErrnoException = new Error(
+        'Ya has aceptado la oferta por este producto.'
+      );
       err.code = 409;
       throw err;
     }
     if (bidAccepted.bid_status === 'rechazado') {
-      const err = new Error('Ya has rechazado la oferta por este producto.');
+      const err: ErrnoException = new Error(
+        'Ya has rechazado la oferta por este producto.'
+      );
       err.code = 409;
       throw err;
     }
@@ -81,9 +93,10 @@ async function acceptBid(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function declineBid(req, res, next) {
+// TODO: REVISAR TIPOS
+const declineBid: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { bidId } = req.params;
@@ -92,13 +105,15 @@ async function declineBid(req, res, next) {
     const product = await productsRepository.findProductById(bid.product_id);
 
     if (id !== product.seller_id) {
-      const err = new Error('No tienes permisos para aceptar esta oferta');
+      const err: ErrnoException = new Error(
+        'No tienes permisos para aceptar esta oferta'
+      );
       err.code = 401;
       throw err;
     }
 
     if (bid.bid_status === ('rechazado' || 'aceptado')) {
-      const err = new Error('Esta oferta ya se ha respondido');
+      const err: ErrnoException = new Error('Esta oferta ya se ha respondido');
       err.code = 409;
       throw err;
     }
@@ -113,22 +128,25 @@ async function declineBid(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function deleteBidById(req, res, next) {
+// TODO: REVISAR TIPOS
+const deleteBidById: RequestHandler = async (req: any, res: any, next) => {
   try {
     const { id } = req.auth;
     const { bidId } = req.params;
     const bidData = await bidsRepository.getBidById(bidId);
 
     if (!bidData.length) {
-      const err = new Error('La oferta no existe');
+      const err: ErrnoException = new Error('La oferta no existe');
       err.code = 404;
       throw err;
     }
 
     if (bidData[0].user_id !== id) {
-      const err = new Error('No tienes permisos para borrar esta oferta');
+      const err: ErrnoException = new Error(
+        'No tienes permisos para borrar esta oferta'
+      );
       err.code = 401;
       throw err;
     }
@@ -139,9 +157,10 @@ async function deleteBidById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function modifyBidById(req, res, next) {
+// TODO: REVISAR TIPOS
+const modifyBidById: RequestHandler = async (req: any, res: any, next) => {
   try {
     const { id } = req.auth;
     const data = req.body;
@@ -151,13 +170,15 @@ async function modifyBidById(req, res, next) {
     console.log(data);
 
     if (!bidData.length) {
-      const err = new Error('La oferta no existe');
+      const err: ErrnoException = new Error('La oferta no existe');
       err.code = 404;
       throw err;
     }
 
     if (bidData[0].user_id !== id) {
-      const err = new Error('No tienes permisos para modificar esta oferta');
+      const err: ErrnoException = new Error(
+        'No tienes permisos para modificar esta oferta'
+      );
       err.code = 401;
       throw err;
     }
@@ -172,9 +193,9 @@ async function modifyBidById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function getUserBidsById(req, res, next) {
+const getUserBidsById: RequestHandler = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const bids = await bidsRepository.getUserBidsById(userId);
@@ -182,9 +203,13 @@ async function getUserBidsById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function getUserReceivedBidsBySellerId(req, res, next) {
+const getUserReceivedBidsBySellerId: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
   try {
     const { userId } = req.params;
     const bids = await bidsRepository.getUserReceivedBidsBySellerId(userId);
@@ -192,9 +217,9 @@ async function getUserReceivedBidsBySellerId(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function getProductsBidsById(req, res, next) {
+const getProductsBidsById: RequestHandler = async (req, res, next) => {
   try {
     const { productId } = req.params;
     const bids = await bidsRepository.getProductsBidsById(productId);
@@ -202,9 +227,9 @@ async function getProductsBidsById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-module.exports = {
+export {
   declineBid,
   acceptBid,
   placeBid,

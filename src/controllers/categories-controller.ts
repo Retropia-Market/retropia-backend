@@ -1,14 +1,11 @@
-const { categoriesRepository } = require('../repositories');
+import { RequestHandler } from 'express';
+import { categoriesRepository } from '../repositories';
 
-const getCategories = async (req, res, next) => {
+export const getCategories: RequestHandler = async (req, res, next) => {
   try {
     const categories = await categoriesRepository.getCategories();
     res.send(categories);
   } catch (error) {
     next(error);
   }
-};
-
-module.exports = {
-  getCategories,
 };

@@ -1,8 +1,7 @@
-const cors = require('cors');
-const http = require('http');
-const ws = require('../ws');
-const express = require('express');
-const path = require('path');
+import cors from 'cors';
+// import ws from '../ws';
+import express from 'express';
+import path from 'path';
 
 const {
   usersController,
@@ -15,11 +14,11 @@ const {
   chatController,
 } = require('./controllers');
 
-const {
+import {
   validateAuthorization,
   uploadProductImage,
-  uploadImg,
-} = require('./middlewares');
+  uploadUserImg,
+} from './middlewares';
 const staticPath = path.resolve(__dirname, 'static');
 
 const app = express();
@@ -63,7 +62,7 @@ app.patch(
 app.post(
   '/users/:id/update-img',
   validateAuthorization,
-  uploadImg.uploadUserImg.single('userImg'),
+  uploadUserImg.uploadUserImg.single('userImg'),
   usersController.updateImage
 );
 // Borrar imagen de usuario

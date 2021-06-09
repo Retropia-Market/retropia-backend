@@ -1,7 +1,11 @@
-const { imagesRepository } = require('../repositories');
 const fs = require('fs').promises;
+import { imagesRepository } from '../repositories';
 
-async function deleteImageById(req, res, next) {
+import { RequestHandler } from 'express';
+import { ErrnoException } from '../models/Error';
+
+// TODO: REVISAR TIPOS
+const deleteImageById: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.params;
     const { id: userId } = req.auth;
@@ -9,14 +13,14 @@ async function deleteImageById(req, res, next) {
     const image = await imagesRepository.findImageByImageId(id);
 
     if (!image) {
-      const err = new Error('No existe la imagen');
+      const err: ErrnoException = new Error('No existe la imagen');
       err.code = 404;
 
       throw err;
     }
 
-    if (userId !== image.user_id && role !== 'admin') {
-      const err = new Error(
+    if (userId !== image.user_id) {
+      const err: ErrnoException = new Error(
         'Sin permisos, sólo el dueño de la venta o el admin puede borrar'
       );
       err.code = 403;
@@ -32,8 +36,6 @@ async function deleteImageById(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
-
-module.exports = {
-  deleteImageById,
 };
+
+export { deleteImageById };

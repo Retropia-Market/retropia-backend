@@ -1,5 +1,5 @@
-const { database } = require('../infrastructure');
-const { getSingleProduct } = require('./products-repository');
+import database from '../infrastructure';
+import { getSingleProduct } from './products-repository';
 
 /**############################################################################
  *
@@ -57,7 +57,7 @@ async function removeFavourite(userId, productId) {
 async function getUserFavourites(userId) {
   const query = 'SELECT * FROM favourites WHERE user_id = ?';
   const [favouritesData] = await database.pool.query(query, userId);
-  const favourites = [];
+  const favourites: {}[] = [];
 
   for (const favourite of favouritesData) {
     const product = await getSingleProduct(favourite.product_id);
@@ -81,7 +81,7 @@ async function getFavouriteById(favouriteId) {
   return favourite[0];
 }
 
-module.exports = {
+export {
   userHasFavourite,
   addFavourite,
   removeFavourite,

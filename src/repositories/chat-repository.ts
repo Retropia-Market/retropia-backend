@@ -1,4 +1,4 @@
-const { database } = require('../infrastructure');
+import database from '../infrastructure';
 
 const getContacts = async (userId) => {
   // const query =
@@ -52,7 +52,7 @@ const getMessages = async (userId, targetUserId) => {
   return result;
 };
 
-module.exports = {
+export {
   getContacts,
   getContact,
   getLastMessages,

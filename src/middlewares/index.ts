@@ -1,11 +1,11 @@
-const { validateAuthorization } = require('./validate-auth');
-const { uploadProductImage } = require('./uploadProductImg');
-const uploadImg = require('./upload-img');
-const { isCorrectUser } = require('./isCorrectUser');
+import { validateAuthorization } from './validate-auth';
+import { uploadProductImage } from './uploadProductImg';
+import { uploadUserImg } from './upload-img';
+import { isCorrectUser } from './isCorrectUser';
 
-module.exports = {
+export {
   validateAuthorization,
   uploadProductImage,
-  uploadImg,
+  uploadUserImg,
   isCorrectUser,
 };

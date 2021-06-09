@@ -1,6 +1,6 @@
-const { format } = require('date-fns');
+import { format } from 'date-fns';
 
-const { database } = require('../infrastructure');
+import database from '../infrastructure';
 
 async function placeBid(userId, productId, bidPrice, message) {
   try {
@@ -122,7 +122,7 @@ async function declineBid(bidId) {
   }
 }
 
-module.exports = {
+export {
   placeBid,
   checkBidData,
   deleteBid,

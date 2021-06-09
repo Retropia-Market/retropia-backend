@@ -1,11 +1,14 @@
-const Joi = require('joi');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import Joi from 'joi';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+import { RequestHandler } from 'express';
 
 const { isCorrectUser } = require('../middlewares');
 const { usersRepository } = require('../repositories');
+import { ErrnoException } from '../models/Error';
 
-async function getUsers(req, res, next) {
+const getUsers: RequestHandler = async (req, res, next) => {
   try {
     const users = await usersRepository.getUsers();
 
@@ -13,9 +16,9 @@ async function getUsers(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function getUserById(req, res, next) {
+const getUserById: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = await usersRepository.getUserById(id);
@@ -24,9 +27,9 @@ async function getUserById(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function registerUser(req, res, next) {
+const registerUser: RequestHandler = async (req, res, next) => {
   try {
     const data = req.body;
 
@@ -44,7 +47,9 @@ async function registerUser(req, res, next) {
 
     // Comprobar si las passwords coinciden
     if (data.password !== data.repeatedPassword) {
-      const err = new Error('Las contraseñas deben ser iguales');
+      const err: ErrnoException = new Error(
+        'Las contraseñas deben ser iguales'
+      );
       err.code = 400;
       throw err;
     }
@@ -52,7 +57,9 @@ async function registerUser(req, res, next) {
     // Comprobar si ya existe un usuario con ese email
     const user = await usersRepository.findUserByEmail(data.email);
     if (user) {
-      const err = new Error('Parece que ya existe un usuario con ese correo.');
+      const err: ErrnoException = new Error(
+        'Parece que ya existe un usuario con ese correo.'
+      );
       err.code = 409;
       throw err;
     }
@@ -86,9 +93,9 @@ async function registerUser(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function userLogin(req, res, next) {
+const userLogin: RequestHandler = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -103,7 +110,7 @@ async function userLogin(req, res, next) {
 
     // Comprobar que existe un usuario con ese email
     if (!loggedUser) {
-      const err = new Error('No existe usuario con ese email');
+      const err: ErrnoException = new Error('No existe usuario con ese email');
       err.code = 401;
       throw err;
     }
@@ -111,9 +118,9 @@ async function userLogin(req, res, next) {
     // Comprobar que la password del usuario es correcta
     const isValidPassword = await bcrypt.compare(password, loggedUser.password);
     if (!isValidPassword) {
-      const error = new Error('El password no es válido');
-      error.code = 401;
-      throw error;
+      const err: ErrnoException = new Error('El password no es válido');
+      err.code = 401;
+      throw err;
     }
 
     // Crear el token de autenticacion para el usuario
@@ -140,9 +147,10 @@ async function userLogin(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function updateProfile(req, res, next) {
+// TODO: REVISAR TIPOS
+const updateProfile: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.params;
     const data = req.body;
@@ -181,9 +189,10 @@ async function updateProfile(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function updatePassword(req, res, next) {
+// TODO: REVISAR TIPOS
+const updatePassword: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.params;
     const data = req.body;
@@ -198,7 +207,9 @@ async function updatePassword(req, res, next) {
       user.password
     );
     if (!isValidPassword) {
-      const err = new Error('La contrasenia actual es incorrecta');
+      const err: ErrnoException = new Error(
+        'La contrasenia actual es incorrecta'
+      );
       err.code = 401;
       err.message = 'La contrasenia actual es incorrecta';
       throw err;
@@ -214,7 +225,7 @@ async function updatePassword(req, res, next) {
 
     // Comprobar que las nuevas password nuevas coinciden
     if (data.newPassword !== data.repeatedNewPassword) {
-      const err = new Error('Las constrasenias no coinciden');
+      const err: ErrnoException = new Error('Las constrasenias no coinciden');
       err.code = 400;
       throw err;
     }
@@ -231,9 +242,10 @@ async function updatePassword(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function updateImage(req, res, next) {
+// TODO: REVISAR TIPOS
+const updateImage: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.params;
     isCorrectUser(id, req.auth.id); // Comprobar que el id es correcto
@@ -256,9 +268,10 @@ async function updateImage(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-async function deleteImage(req, res, next) {
+// TODO: REVISAR TIPOS
+const deleteImage: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.params;
     isCorrectUser(id, req.auth.id); // Comprobar que el id es correcto
@@ -281,9 +294,9 @@ async function deleteImage(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
+};
 
-module.exports = {
+export {
   getUsers,
   getUserById,
   registerUser,

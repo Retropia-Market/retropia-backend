@@ -1,3 +1,4 @@
-const database = require('./database');
+import { pool } from './database';
 
-module.exports = { database };
+const database = pool;
+export default database;

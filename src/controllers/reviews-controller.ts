@@ -1,21 +1,24 @@
-const Joi = require('joi');
-const { database } = require('../infrastructure');
-const { isCorrectUser } = require('../middlewares');
+import { ErrorRequestHandler, RequestHandler } from 'express';
+import Joi from 'joi';
+import { isCorrectUser } from '../middlewares';
+import { ErrnoException } from '../models/Error';
 
-const {
+import {
   reviewsRepository,
   bidsRepository,
   productsRepository,
-} = require('../repositories');
+} from '../repositories';
 
-const getReviewByProductId = async (req, res, next) => {
+const getReviewByProductId: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
     const schema = Joi.number().min(1).positive();
     await schema.validateAsync(id);
     const getReview = await reviewsRepository.getReviewByProductId(id);
     if (!getReview) {
-      const noReviewError = new Error('Este artículo todavía no tiene reviews');
+      const noReviewError: ErrnoException = new Error(
+        'Este artículo todavía no tiene reviews'
+      );
       noReviewError.code = 404;
       throw noReviewError;
     } else {
@@ -25,7 +28,9 @@ const getReviewByProductId = async (req, res, next) => {
     next(error);
   }
 };
-const addReviewToProduct = async (req, res, next) => {
+
+// TODO: REVISAR TIPOS
+const addReviewToProduct: RequestHandler = async (req: any, res, next) => {
   try {
     //TODO - CHECK AUTH WITH BID
     const { id: userId } = req.auth;
@@ -39,8 +44,8 @@ const addReviewToProduct = async (req, res, next) => {
 
     const getProduct = await productsRepository.findProductById(id);
     if (!getProduct) {
-      const noProductError = new Error('El producto no existe');
-      noProductError.code = '404';
+      const noProductError: ErrnoException = new Error('El producto no existe');
+      noProductError.code = 404;
       throw noProductError;
     }
 
@@ -72,7 +77,8 @@ const addReviewToProduct = async (req, res, next) => {
     next(error);
   }
 };
-const updateReview = async (req, res, next) => {
+
+const updateReview: RequestHandler = async (req: any, res, next) => {
   try {
     const { id: userId } = req.auth;
 
@@ -85,8 +91,8 @@ const updateReview = async (req, res, next) => {
 
     const getProduct = await productsRepository.findProductById(id);
     if (!getProduct) {
-      const noProductError = new Error('El producto no existe');
-      noProductError.code = '404';
+      const noProductError: ErrnoException = new Error('El producto no existe');
+      noProductError.code = 404;
       throw noProductError;
     }
 
@@ -114,7 +120,9 @@ const updateReview = async (req, res, next) => {
     next(error);
   }
 };
-const deleteReview = async (req, res, next) => {
+
+// TODO: REVISAR TIPOS
+const deleteReview: RequestHandler = async (req: any, res, next) => {
   try {
     //TODO - CHECK AUTH WITH BID
     const { id: userId } = req.auth;
@@ -123,8 +131,8 @@ const deleteReview = async (req, res, next) => {
 
     const getProduct = await productsRepository.findProductById(id);
     if (!getProduct) {
-      const noProductError = new Error('El producto no existe');
-      noProductError.code = '404';
+      const noProductError: ErrnoException = new Error('El producto no existe');
+      noProductError.code = 404;
       throw noProductError;
     }
 
@@ -157,7 +165,7 @@ const deleteReview = async (req, res, next) => {
   }
 };
 
-const getAvgReviewScoreByUser = async (req, res, next) => {
+const getAvgReviewScoreByUser: RequestHandler = async (req, res, next) => {
   try {
     const { id: userId } = req.params;
 
@@ -170,7 +178,7 @@ const getAvgReviewScoreByUser = async (req, res, next) => {
   }
 };
 
-const getMadeReviews = async (req, res, next) => {
+const getMadeReviews: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { userId } = req.params;
@@ -187,7 +195,8 @@ const getMadeReviews = async (req, res, next) => {
     next(error);
   }
 };
-const getReceivedReviews = async (req, res, next) => {
+
+const getReceivedReviews: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { userId } = req.params;
@@ -203,7 +212,7 @@ const getReceivedReviews = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   getReviewByProductId,
   addReviewToProduct,
   updateReview,

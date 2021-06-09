@@ -1,3 +1,6 @@
+import { ErrnoException } from '../models/Error';
+
+// TODO: REVISAR TIPOS
 const { findUserById } = require('../repositories/users-repository');
 
 /**
@@ -6,21 +9,21 @@ const { findUserById } = require('../repositories/users-repository');
  * @param {string} reqParam id del usuario en la ruta como req.param
  * @param {string} reqAuth id del usuario extraido del JWT
  */
-async function isCorrectUser(reqParam, reqAuth) {
+export const isCorrectUser = async (reqParam, reqAuth) => {
   // Comprobar que el usuario con id del req param existe
   const user = await findUserById(reqParam);
   if (!user) {
-    const err = new Error('No existe usuario con ese email');
+    const err: ErrnoException = new Error('No existe usuario con ese email');
     err.code = 401;
     throw err;
   }
 
   // Comprobar que el id del parametro y el del usuario que intenta acceder son el mismo
   if (Number(reqParam) !== reqAuth) {
-    const err = new Error('No tienes los permisos para acceder a este lugar');
+    const err: ErrnoException = new Error(
+      'No tienes los permisos para acceder a este lugar'
+    );
     err.code = 403;
     throw err;
   }
-}
-
-module.exports = { isCorrectUser };
+};

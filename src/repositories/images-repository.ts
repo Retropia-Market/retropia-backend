@@ -1,4 +1,4 @@
-const { database } = require('../infrastructure');
+import database from '../infrastructure';
 
 async function findImageById(id) {
   const query = 'SELECT * FROM products_img WHERE product_id = ?';
@@ -26,9 +26,4 @@ async function deleteImageById(id) {
   return await database.pool.query(query, id);
 }
 
-module.exports = {
-  deleteImageById,
-  findImageById,
-  createImage,
-  findImageByImageId,
-};
+export { deleteImageById, findImageById, createImage, findImageByImageId };

@@ -1,19 +1,19 @@
-const usersRepository = require('./users-repository');
-const productsRepository = require('./products-repository');
-const imagesRepository = require('./images-repository');
-const reviewsRepository = require('./reviews-repository');
-const bidsRepository = require('./bids-repository');
-const favouritesRepository = require('./favourites-repository');
-const categoriesRepository = require('./categories-repository');
-const chatRepository = require('./chat-repository');
+import * as usersRepository from './users-repository';
+import * as productsRepository from './products-repository';
+import * as imagesRepository from './images-repository';
+import * as reviewsRepository from './reviews-repository';
+import * as bidsRepository from './bids-repository';
+import * as favouritesRepository from './favourites-repository';
+import * as categoriesRepository from './categories-repository';
+import * as chatRepository from './chat-repository';
 
-module.exports = {
-    usersRepository,
-    productsRepository,
-    imagesRepository,
-    reviewsRepository,
-    bidsRepository,
-    favouritesRepository,
-    categoriesRepository,
-    chatRepository,
+export {
+  usersRepository,
+  productsRepository,
+  imagesRepository,
+  reviewsRepository,
+  bidsRepository,
+  favouritesRepository,
+  categoriesRepository,
+  chatRepository,
 };

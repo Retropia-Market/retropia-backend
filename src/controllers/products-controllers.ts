@@ -1,11 +1,14 @@
-const Joi = require('joi');
+import Joi from 'joi';
 const fs = require('fs').promises;
+
+import { RequestHandler } from 'express';
+import { ErrnoException } from '../models/Error';
 
 //TODO - NORMALIZE NAMES && COMMENT
 
 const { productsRepository, imagesRepository } = require('../repositories');
 
-const getCatalogue = async (req, res, next) => {
+const getCatalogue: RequestHandler = async (req, res, next) => {
   try {
     const products = await productsRepository.getCatalogue(
       req.query ? req.query : ''
@@ -16,7 +19,7 @@ const getCatalogue = async (req, res, next) => {
   }
 };
 
-const getCatalogueByUserId = async (req, res, next) => {
+const getCatalogueByUserId: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
     const schema = Joi.number().positive().min(1);
@@ -28,7 +31,8 @@ const getCatalogueByUserId = async (req, res, next) => {
   }
 };
 
-const addProductToSellList = async (req, res, next) => {
+// TODO: REVISAR TIPOS
+const addProductToSellList: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { files } = req;
@@ -48,7 +52,7 @@ const addProductToSellList = async (req, res, next) => {
       id
     );
 
-    for (file of files) {
+    for (const file of files) {
       const url = `productImages/${id}/${file.filename}`;
       await imagesRepository.createImage(url, createProduct.id);
     }
@@ -64,7 +68,8 @@ const addProductToSellList = async (req, res, next) => {
   }
 };
 
-const addMoreImagesToProduct = async (req, res, next) => {
+// TODO: REVISAR TIPOS
+const addMoreImagesToProduct: RequestHandler = async (req: any, res, next) => {
   try {
     const { id: userId } = req.auth;
     const { files } = req;
@@ -72,27 +77,27 @@ const addMoreImagesToProduct = async (req, res, next) => {
 
     const searchProduct = await productsRepository.findProductById(id);
     if (!searchProduct) {
-      const err = new Error('No existe el producto');
+      const err: ErrnoException = new Error('No existe el producto');
       err.code = 404;
 
       throw err;
     }
     if (userId != searchProduct.seller_id) {
-      const errorAuth = new Error(
+      const errorAuth: ErrnoException = new Error(
         'No tienes permiso para actualizar este producto'
       );
       errorAuth.code = 403;
       throw errorAuth;
     }
     if (searchProduct.sale_status === 'vendido') {
-      const errorAlreadySold = new Error(
+      const errorAlreadySold: ErrnoException = new Error(
         'No puedes modificar productos ya vendidos'
       );
       errorAlreadySold.code = 403;
       throw errorAlreadySold;
     }
 
-    for (image of files) {
+    for (const image of files) {
       const url = `static/images/${id}/${image.filename}`;
       const addImage = await imagesRepository.createImage(url, id);
     }
@@ -103,7 +108,8 @@ const addMoreImagesToProduct = async (req, res, next) => {
   }
 };
 
-const removeProductbyId = async (req, res, next) => {
+// TODO: REVISAR TIPOS
+const removeProductbyId: RequestHandler = async (req: any, res, next) => {
   try {
     const { id: userId } = req.auth;
     const { id } = req.params;
@@ -113,13 +119,13 @@ const removeProductbyId = async (req, res, next) => {
     await schema.validateAsync({ id });
     const searchProduct = await productsRepository.findProductById(id);
     if (!searchProduct) {
-      const err = new Error('No existe el producto');
+      const err: ErrnoException = new Error('No existe el producto');
       err.code = 404;
 
       throw err;
     }
     if (userId != searchProduct.seller_id) {
-      const errorAuth = new Error(
+      const errorAuth: ErrnoException = new Error(
         'No tienes permiso para borrar este producto'
       );
       errorAuth.code = 403;
@@ -139,7 +145,8 @@ const removeProductbyId = async (req, res, next) => {
   }
 };
 
-const updateProduct = async (req, res, next) => {
+// TODO: REVISAR TIPOS
+const updateProduct: RequestHandler = async (req: any, res, next) => {
   try {
     const { id: userId } = req.auth;
     const { id } = req.params;
@@ -154,20 +161,20 @@ const updateProduct = async (req, res, next) => {
     await schema.validateAsync(req.body);
     const searchProduct = await productsRepository.findProductById(id);
     if (!searchProduct) {
-      const err = new Error('No existe el producto');
+      const err: ErrnoException = new Error('No existe el producto');
       err.code = 404;
 
       throw err;
     }
     if (userId != searchProduct.seller_id) {
-      const errorAuth = new Error(
+      const errorAuth: ErrnoException = new Error(
         'No tienes permiso para actualizar este producto'
       );
       errorAuth.code = 403;
       throw errorAuth;
     }
     if (searchProduct.sale_status === 'vendido') {
-      const errorAlreadySold = new Error(
+      const errorAlreadySold: ErrnoException = new Error(
         'No puedes modificar productos ya vendidos'
       );
       errorAlreadySold.code = 403;
@@ -180,7 +187,8 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-const updateSaleStatus = async (req, res, next) => {
+// TODO: REVISAR TIPOS
+const updateSaleStatus: RequestHandler = async (req: any, res, next) => {
   try {
     const { id: userId } = req.auth;
     const { id } = req.params;
@@ -191,13 +199,13 @@ const updateSaleStatus = async (req, res, next) => {
     await schema.validateAsync({ sale_status });
     const searchProduct = await productsRepository.findProductById(id);
     if (!searchProduct) {
-      const err = new Error('No existe el producto');
+      const err: ErrnoException = new Error('No existe el producto');
       err.code = 404;
 
       throw err;
     }
     if (userId != searchProduct.seller_id) {
-      const errorAuth = new Error(
+      const errorAuth: ErrnoException = new Error(
         'No tienes permiso para actualizar este producto'
       );
       errorAuth.code = 403;
@@ -211,14 +219,14 @@ const updateSaleStatus = async (req, res, next) => {
   }
 };
 
-const getSingleProduct = async (req, res, next) => {
+const getSingleProduct: RequestHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
 
     const product = await productsRepository.getSingleProduct(id);
 
     if (!product) {
-      const err = new Error('No existe el producto');
+      const err: ErrnoException = new Error('No existe el producto');
       err.code = 404;
 
       throw err;
@@ -229,7 +237,7 @@ const getSingleProduct = async (req, res, next) => {
   }
 };
 
-const searchCatalogue = async (req, res, next) => {
+const searchCatalogue: RequestHandler = async (req, res, next) => {
   try {
     const { term } = req.params;
     const data = await productsRepository.searchCatalogue(term);
@@ -239,7 +247,7 @@ const searchCatalogue = async (req, res, next) => {
   }
 };
 
-const getTopProducts = async (req, res, next) => {
+const getTopProducts: RequestHandler = async (req, res, next) => {
   try {
     const data = await productsRepository.getTopProducts();
     res.send(data);
@@ -248,7 +256,7 @@ const getTopProducts = async (req, res, next) => {
   }
 };
 
-const getSimilarProducts = async (req, res, next) => {
+const getSimilarProducts: RequestHandler = async (req, res, next) => {
   try {
     const { subcategory } = req.params;
     const schema = Joi.object({
@@ -262,7 +270,7 @@ const getSimilarProducts = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   addProductToSellList,
   getCatalogue,
   removeProductbyId,

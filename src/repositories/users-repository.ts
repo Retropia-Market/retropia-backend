@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-const { database } = require('../infrastructure');
+import database from '../infrastructure';
 
 /**############################################################################
  *
@@ -162,7 +162,7 @@ async function deleteImage(id) {
   return findUserById(id);
 }
 
-module.exports = {
+export {
   getUsers,
   getUserById,
   findUserByEmail,

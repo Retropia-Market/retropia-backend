@@ -1,8 +1,8 @@
-const path = require('path');
-const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
+import path from 'path';
+import multer from 'multer';
+import { v4 as uuidv4 } from 'uuid';
 
-const uploadUserImg = multer({
+export const uploadUserImg = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'static/users-img/');
@@ -26,7 +26,3 @@ const uploadUserImg = multer({
     }
   },
 });
-
-module.exports = {
-  uploadUserImg,
-};

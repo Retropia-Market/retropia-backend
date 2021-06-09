@@ -1,5 +1,5 @@
 require('dotenv').config();
-const http = require('http');
+import * as http from 'http';
 
 const WS = require('./ws');
 const { app } = require('./src/app');

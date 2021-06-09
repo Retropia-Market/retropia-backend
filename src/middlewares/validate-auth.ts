@@ -1,13 +1,20 @@
-const jwt = require('jsonwebtoken');
+import { RequestHandler } from 'express';
+import jwt from 'jsonwebtoken';
 
-const { database } = require('../infrastructure');
+import database from '../infrastructure';
+import { ErrnoException } from '../models/Error';
 
-async function validateAuthorization(req, res, next) {
+// TODO: REVISAR TIPOS
+export const validateAuthorization: RequestHandler = async (
+  req: any,
+  res,
+  next
+) => {
   try {
     const { authorization } = req.headers;
 
     if (!authorization || !authorization.startsWith('Bearer ')) {
-      const error = new Error('Authorization header required');
+      const error: ErrnoException = new Error('Authorization header required');
       error.code = 401;
       throw error;
     }
@@ -21,7 +28,7 @@ async function validateAuthorization(req, res, next) {
     const [users] = await database.pool.query(query, decodedToken.id);
 
     if (!users || !users.length) {
-      const error = new Error('El usuario ya no existe');
+      const error: ErrnoException = new Error('El usuario ya no existe');
       error.code = 401;
       throw error;
     }
@@ -32,6 +39,4 @@ async function validateAuthorization(req, res, next) {
     res.status(err.status || 500);
     res.send({ error: err.message });
   }
-}
-
-module.exports = { validateAuthorization };
+};

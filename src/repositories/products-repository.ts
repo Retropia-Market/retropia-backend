@@ -1,6 +1,6 @@
-const { database } = require('../infrastructure');
-const { format } = require('date-fns');
-const { findImageById } = require('./images-repository');
+import { format } from 'date-fns';
+import database from '../infrastructure';
+import { findImageById } from './images-repository';
 
 /**
  * Función para añadir el producto a la base de datos.
@@ -72,7 +72,7 @@ const getCatalogue = async (querySearch) => {
     finalSearch = products;
   }
 
-  for (prod of finalSearch) {
+  for (const prod of finalSearch) {
     const images = await findImageById(prod.id);
     prod.images = [...images];
   }
@@ -92,7 +92,7 @@ const getCatalogueByUserId = async (userId) => {
     getCatalogueByUserIdQuery,
     userId
   );
-  for (prod of getData) {
+  for (const prod of getData) {
     const images = await findImageById(prod.id);
     prod.images = [...images];
   }
@@ -146,7 +146,7 @@ const getSingleProduct = async (id) => {
  */
 
 const updateProduct = async (data, id) => {
-  for (bodyKey in data) {
+  for (const bodyKey in data) {
     if (bodyKey != 'subcategory') {
       const updateQuery = `UPDATE products SET ${bodyKey} = ? WHERE id = ?`;
       const updateData = await database.pool.query(updateQuery, [
@@ -191,7 +191,7 @@ const searchCatalogue = async (search) => {
   const searchQuery = `SELECT * FROM products WHERE name LIKE ?`;
   const [searchData] = await database.pool.query(searchQuery, term);
 
-  for (prod of searchData) {
+  for (const prod of searchData) {
     const images = await findImageById(prod.id);
     prod.images = [...images];
   }
@@ -230,7 +230,7 @@ const getTopProducts = async () => {
   const getTopProducts =
     'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id ORDER BY views DESC LIMIT ?';
   const [data] = await database.pool.query(getTopProducts, 4);
-  for (prod of data) {
+  for (const prod of data) {
     const images = await findImageById(prod.id);
     prod.images = [...images];
   }
@@ -242,7 +242,7 @@ const getSimilarProducts = async (subCatName) => {
   const getRelatedProducts =
     'SELECT products.id, products.seller_id, products.name , users.username as seller, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON users.id = products.seller_id WHERE sub_categories.name = ? ORDER BY RAND() LIMIT 4';
   const [data] = await database.pool.query(getRelatedProducts, subCatName);
-  for (prod of data) {
+  for (const prod of data) {
     const images = await findImageById(prod.id);
     prod.images = [...images];
   }
@@ -263,7 +263,7 @@ const getBidByProdAndUser = async (prodId, userId) => {
   return getDataBidByUserProd[0];
 };
 
-module.exports = {
+export {
   addProductToSellList,
   getCatalogue,
   findProductById,
