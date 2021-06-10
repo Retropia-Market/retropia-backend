@@ -1,16 +1,32 @@
-const Joi = require('joi');
-const { bidsRepository, productsRepository } = require('../repositories');
-async function placeBid(req, res, next) {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserReceivedBidsBySellerId = exports.getProductsBidsById = exports.getUserBidsById = exports.modifyBidById = exports.deleteBidById = exports.placeBid = exports.acceptBid = exports.declineBid = void 0;
+const joi_1 = __importDefault(require("joi"));
+const repositories_1 = require("../repositories");
+// TODO: REVISAR TIPOS
+const placeBid = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const data = req.body;
         const { productId } = req.params;
-        const schema = Joi.object({
-            message: Joi.string().max(500).required(),
-            bidPrice: Joi.number().required(),
+        const schema = joi_1.default.object({
+            message: joi_1.default.string().max(500).required(),
+            bidPrice: joi_1.default.number().required(),
         });
-        await schema.validateAsync(data);
-        const product = await productsRepository.findProductById(productId);
+        yield schema.validateAsync(data);
+        const product = yield repositories_1.productsRepository.findProductById(productId);
         if (!product) {
             const err = new Error('No se ha encontrado el producto');
             err.code = 404;
@@ -21,25 +37,27 @@ async function placeBid(req, res, next) {
             err.code = 403;
             throw err;
         }
-        const bidExist = await bidsRepository.checkBidData(id, productId);
+        const bidExist = yield repositories_1.bidsRepository.checkBidData(id, productId);
         if (bidExist.length) {
             const err = new Error('Ya has ofertado por este producto.');
             err.code = 409;
             throw err;
         }
-        await bidsRepository.placeBid(id, productId, data.bidPrice, data.message);
+        yield repositories_1.bidsRepository.placeBid(id, productId, data.bidPrice, data.message);
         res.send({ Status: 'OK', Message: 'Oferta realizada con exito.' });
     }
     catch (error) {
         next(error);
     }
-}
-async function acceptBid(req, res, next) {
+});
+exports.placeBid = placeBid;
+// TODO: REVISAR TIPOS
+const acceptBid = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { bidId } = req.params;
-        const bidAccepted = await bidsRepository.getBidById(bidId);
-        const product = await productsRepository.findProductById(bidAccepted.product_id);
+        const bidAccepted = yield repositories_1.bidsRepository.getBidById(bidId);
+        const product = yield repositories_1.productsRepository.findProductById(bidAccepted.product_id);
         if (id !== product.seller_id) {
             const err = new Error('No tienes permisos para aceptar esta oferta');
             err.code = 401;
@@ -55,24 +73,26 @@ async function acceptBid(req, res, next) {
             err.code = 409;
             throw err;
         }
-        const productBids = await bidsRepository.getProductsBidsById(product.id);
+        const productBids = yield repositories_1.bidsRepository.getProductsBidsById(product.id);
         for (const bid of productBids) {
-            bidsRepository.declineBid(bid.id);
+            repositories_1.bidsRepository.declineBid(bid.id);
         }
-        await bidsRepository.acceptBid(bidId);
-        await productsRepository.updateSaleStatus('vendido', product.id);
+        yield repositories_1.bidsRepository.acceptBid(bidId);
+        yield repositories_1.productsRepository.updateSaleStatus('vendido', product.id);
         res.send({ Status: 'OK', Message: 'Oferta aceptada con exito.' });
     }
     catch (error) {
         next(error);
     }
-}
-async function declineBid(req, res, next) {
+});
+exports.acceptBid = acceptBid;
+// TODO: REVISAR TIPOS
+const declineBid = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { bidId } = req.params;
-        const bid = await bidsRepository.getBidById(bidId);
-        const product = await productsRepository.findProductById(bid.product_id);
+        const bid = yield repositories_1.bidsRepository.getBidById(bidId);
+        const product = yield repositories_1.productsRepository.findProductById(bid.product_id);
         if (id !== product.seller_id) {
             const err = new Error('No tienes permisos para aceptar esta oferta');
             err.code = 401;
@@ -83,7 +103,7 @@ async function declineBid(req, res, next) {
             err.code = 409;
             throw err;
         }
-        const updatedBid = await bidsRepository.declineBid(bidId);
+        const updatedBid = yield repositories_1.bidsRepository.declineBid(bidId);
         res.send({
             Status: 'OK',
             Message: 'Oferta rechaza con exito',
@@ -93,12 +113,14 @@ async function declineBid(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function deleteBidById(req, res, next) {
+});
+exports.declineBid = declineBid;
+// TODO: REVISAR TIPOS
+const deleteBidById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { bidId } = req.params;
-        const bidData = await bidsRepository.getBidById(bidId);
+        const bidData = yield repositories_1.bidsRepository.getBidById(bidId);
         if (!bidData.length) {
             const err = new Error('La oferta no existe');
             err.code = 404;
@@ -109,20 +131,22 @@ async function deleteBidById(req, res, next) {
             err.code = 401;
             throw err;
         }
-        await bidsRepository.deleteBid(bidId);
+        yield repositories_1.bidsRepository.deleteBid(bidId);
         res.status = 204;
         res.send({ Status: 'OK', Message: 'Oferta producto eliminada con exito.' });
     }
     catch (error) {
         next(error);
     }
-}
-async function modifyBidById(req, res, next) {
+});
+exports.deleteBidById = deleteBidById;
+// TODO: REVISAR TIPOS
+const modifyBidById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const data = req.body;
         const { bidId } = req.params;
-        const bidData = await bidsRepository.getBidById(bidId);
+        const bidData = yield repositories_1.bidsRepository.getBidById(bidId);
         console.log(data);
         if (!bidData.length) {
             const err = new Error('La oferta no existe');
@@ -134,7 +158,7 @@ async function modifyBidById(req, res, next) {
             err.code = 401;
             throw err;
         }
-        await bidsRepository.modifyBid(bidId, data);
+        yield repositories_1.bidsRepository.modifyBid(bidId, data);
         res.status = 204;
         res.send({
             Status: 'OK',
@@ -144,44 +168,39 @@ async function modifyBidById(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function getUserBidsById(req, res, next) {
+});
+exports.modifyBidById = modifyBidById;
+const getUserBidsById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        const bids = await bidsRepository.getUserBidsById(userId);
+        const bids = yield repositories_1.bidsRepository.getUserBidsById(userId);
         res.send({ bids });
     }
     catch (error) {
         next(error);
     }
-}
-async function getUserReceivedBidsBySellerId(req, res, next) {
+});
+exports.getUserBidsById = getUserBidsById;
+const getUserReceivedBidsBySellerId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        const bids = await bidsRepository.getUserReceivedBidsBySellerId(userId);
+        const bids = yield repositories_1.bidsRepository.getUserReceivedBidsBySellerId(userId);
         res.send({ bids });
     }
     catch (error) {
         next(error);
     }
-}
-async function getProductsBidsById(req, res, next) {
+});
+exports.getUserReceivedBidsBySellerId = getUserReceivedBidsBySellerId;
+const getProductsBidsById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { productId } = req.params;
-        const bids = await bidsRepository.getProductsBidsById(productId);
+        const bids = yield repositories_1.bidsRepository.getProductsBidsById(productId);
         res.send({ bids });
     }
     catch (error) {
         next(error);
     }
-}
-module.exports = {
-    declineBid,
-    acceptBid,
-    placeBid,
-    deleteBidById,
-    modifyBidById,
-    getUserBidsById,
-    getProductsBidsById,
-    getUserReceivedBidsBySellerId,
-};
+});
+exports.getProductsBidsById = getProductsBidsById;
+//# sourceMappingURL=bids-controllers.js.map

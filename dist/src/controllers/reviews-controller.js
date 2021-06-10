@@ -1,13 +1,27 @@
-const Joi = require('joi');
-const { database } = require('../infrastructure');
-const { isCorrectUser } = require('../middlewares');
-const { reviewsRepository, bidsRepository, productsRepository, } = require('../repositories');
-const getReviewByProductId = async (req, res, next) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getReceivedReviews = exports.getMadeReviews = exports.getAvgReviewScoreByUser = exports.deleteReview = exports.updateReview = exports.addReviewToProduct = exports.getReviewByProductId = void 0;
+const joi_1 = __importDefault(require("joi"));
+const middlewares_1 = require("../middlewares");
+const repositories_1 = require("../repositories");
+const getReviewByProductId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const schema = Joi.number().min(1).positive();
-        await schema.validateAsync(id);
-        const getReview = await reviewsRepository.getReviewByProductId(id);
+        const schema = joi_1.default.number().min(1).positive();
+        yield schema.validateAsync(id);
+        const getReview = yield repositories_1.reviewsRepository.getReviewByProductId(id);
         if (!getReview) {
             const noReviewError = new Error('Este artículo todavía no tiene reviews');
             noReviewError.code = 404;
@@ -20,24 +34,26 @@ const getReviewByProductId = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-const addReviewToProduct = async (req, res, next) => {
+});
+exports.getReviewByProductId = getReviewByProductId;
+// TODO: REVISAR TIPOS
+const addReviewToProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //TODO - CHECK AUTH WITH BID
         const { id: userId } = req.auth;
         const { id } = req.params;
-        const schema = Joi.object({
-            review_rating: Joi.number().min(0).max(5).required(),
-            review_text: Joi.string().required(),
+        const schema = joi_1.default.object({
+            review_rating: joi_1.default.number().min(0).max(5).required(),
+            review_text: joi_1.default.string().required(),
         });
-        await schema.validateAsync(req.body);
-        const getProduct = await productsRepository.findProductById(id);
+        yield schema.validateAsync(req.body);
+        const getProduct = yield repositories_1.productsRepository.findProductById(id);
         if (!getProduct) {
             const noProductError = new Error('El producto no existe');
-            noProductError.code = '404';
+            noProductError.code = 404;
             throw noProductError;
         }
-        const productBid = await productsRepository.getBidByProdAndUser(id, userId);
+        const productBid = yield repositories_1.productsRepository.getBidByProdAndUser(id, userId);
         // if (!productBid || productBid.bid_status != 'aceptado') {
         //     const noUserError = new Error(
         //         'No tienes permisos para realizar esta acción'
@@ -52,29 +68,30 @@ const addReviewToProduct = async (req, res, next) => {
         //     noSoldYetError.code = '403';
         //     throw noSoldYetError;
         // }
-        const review = await reviewsRepository.addReviewToProduct(req.body, id, userId);
+        const review = yield repositories_1.reviewsRepository.addReviewToProduct(req.body, id, userId);
         res.send(review);
     }
     catch (error) {
         next(error);
     }
-};
-const updateReview = async (req, res, next) => {
+});
+exports.addReviewToProduct = addReviewToProduct;
+const updateReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.auth;
         const { id } = req.params;
-        const schema = Joi.object({
-            review_rating: Joi.number().min(0).max(5).required(),
-            review_text: Joi.string().required(),
+        const schema = joi_1.default.object({
+            review_rating: joi_1.default.number().min(0).max(5).required(),
+            review_text: joi_1.default.string().required(),
         });
-        await schema.validateAsync(req.body);
-        const getProduct = await productsRepository.findProductById(id);
+        yield schema.validateAsync(req.body);
+        const getProduct = yield repositories_1.productsRepository.findProductById(id);
         if (!getProduct) {
             const noProductError = new Error('El producto no existe');
-            noProductError.code = '404';
+            noProductError.code = 404;
             throw noProductError;
         }
-        const productBid = await productsRepository.getBidByProdAndUser(id, userId);
+        const productBid = yield repositories_1.productsRepository.getBidByProdAndUser(id, userId);
         // if (!productBid || productBid.bid_status != 'aceptado') {
         //     const noUserError = new Error(
         //         'No tienes permisos para realizar esta acción'
@@ -89,25 +106,27 @@ const updateReview = async (req, res, next) => {
         //     noSoldYetError.code = '403';
         //     throw noSoldYetError;
         // }
-        const review = await reviewsRepository.updateReview(req.body, id);
+        const review = yield repositories_1.reviewsRepository.updateReview(req.body, id);
         res.send(review);
     }
     catch (error) {
         next(error);
     }
-};
-const deleteReview = async (req, res, next) => {
+});
+exports.updateReview = updateReview;
+// TODO: REVISAR TIPOS
+const deleteReview = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         //TODO - CHECK AUTH WITH BID
         const { id: userId } = req.auth;
         const { id } = req.params;
-        const getProduct = await productsRepository.findProductById(id);
+        const getProduct = yield repositories_1.productsRepository.findProductById(id);
         if (!getProduct) {
             const noProductError = new Error('El producto no existe');
-            noProductError.code = '404';
+            noProductError.code = 404;
             throw noProductError;
         }
-        const productBid = await productsRepository.getBidByProdAndUser(id, userId);
+        const productBid = yield repositories_1.productsRepository.getBidByProdAndUser(id, userId);
         // if (!productBid || productBid.bid_status != 'aceptado') {
         //     const noUserError = new Error(
         //         'No tienes permisos para realizar esta acción'
@@ -122,7 +141,7 @@ const deleteReview = async (req, res, next) => {
         //     noSoldYetError.code = '403';
         //     throw noSoldYetError;
         // }
-        await reviewsRepository.deleteReview(id);
+        yield repositories_1.reviewsRepository.deleteReview(id);
         res.status(201);
         res.send({
             status: 'OK',
@@ -132,23 +151,25 @@ const deleteReview = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-const getAvgReviewScoreByUser = async (req, res, next) => {
+});
+exports.deleteReview = deleteReview;
+const getAvgReviewScoreByUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.params;
-        const getReviewRating = await reviewsRepository.getAvgReviewScoreByUser(userId);
+        const getReviewRating = yield repositories_1.reviewsRepository.getAvgReviewScoreByUser(userId);
         res.send(getReviewRating);
     }
     catch (error) {
         next(error);
     }
-};
-const getMadeReviews = async (req, res, next) => {
+});
+exports.getAvgReviewScoreByUser = getAvgReviewScoreByUser;
+const getMadeReviews = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { userId } = req.params;
-        isCorrectUser(userId, id);
-        const madeReviews = await reviewsRepository.getMadeReviews(userId);
+        middlewares_1.isCorrectUser(userId, id);
+        const madeReviews = yield repositories_1.reviewsRepository.getMadeReviews(userId);
         res.send({
             Status: 'OK',
             madeReviews,
@@ -157,12 +178,13 @@ const getMadeReviews = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-const getReceivedReviews = async (req, res, next) => {
+});
+exports.getMadeReviews = getMadeReviews;
+const getReceivedReviews = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { userId } = req.params;
-        const receivedReviews = await reviewsRepository.getReceivedReviews(userId);
+        const receivedReviews = yield repositories_1.reviewsRepository.getReceivedReviews(userId);
         res.send({
             Status: 'OK',
             receivedReviews,
@@ -171,13 +193,6 @@ const getReceivedReviews = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-module.exports = {
-    getReviewByProductId,
-    addReviewToProduct,
-    updateReview,
-    deleteReview,
-    getAvgReviewScoreByUser,
-    getMadeReviews,
-    getReceivedReviews,
-};
+});
+exports.getReceivedReviews = getReceivedReviews;
+//# sourceMappingURL=reviews-controller.js.map

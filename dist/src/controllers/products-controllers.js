@@ -1,61 +1,81 @@
-const Joi = require('joi');
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSimilarProducts = exports.getTopProducts = exports.getCatalogueByUserId = exports.addMoreImagesToProduct = exports.searchCatalogue = exports.updateSaleStatus = exports.getSingleProduct = exports.updateProduct = exports.removeProductbyId = exports.getCatalogue = exports.addProductToSellList = void 0;
+const joi_1 = __importDefault(require("joi"));
 const fs = require('fs').promises;
 //TODO - NORMALIZE NAMES && COMMENT
 const { productsRepository, imagesRepository } = require('../repositories');
-const getCatalogue = async (req, res, next) => {
+const getCatalogue = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const products = await productsRepository.getCatalogue(req.query ? req.query : '');
+        const products = yield productsRepository.getCatalogue(req.query ? req.query : '');
         res.send(products);
     }
     catch (error) {
         next(error);
     }
-};
-const getCatalogueByUserId = async (req, res, next) => {
+});
+exports.getCatalogue = getCatalogue;
+const getCatalogueByUserId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const schema = Joi.number().positive().min(1);
-        await schema.validateAsync(id);
-        const productsByUserId = await productsRepository.getCatalogueByUserId(id);
+        const schema = joi_1.default.number().positive().min(1);
+        yield schema.validateAsync(id);
+        const productsByUserId = yield productsRepository.getCatalogueByUserId(id);
         res.send(productsByUserId);
     }
     catch (error) {
         next(error);
     }
-};
-const addProductToSellList = async (req, res, next) => {
+});
+exports.getCatalogueByUserId = getCatalogueByUserId;
+// TODO: REVISAR TIPOS
+const addProductToSellList = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { files } = req;
-        const schema = Joi.object({
-            name: Joi.string().required(),
-            status: Joi.string().required(),
-            product_type: Joi.string().required(),
-            location: Joi.string().required(),
-            price: Joi.number().required().min(0).max(100000),
-            description: Joi.string(),
-            subcategory: Joi.string(),
+        const schema = joi_1.default.object({
+            name: joi_1.default.string().required(),
+            status: joi_1.default.string().required(),
+            product_type: joi_1.default.string().required(),
+            location: joi_1.default.string().required(),
+            price: joi_1.default.number().required().min(0).max(100000),
+            description: joi_1.default.string(),
+            subcategory: joi_1.default.string(),
         });
-        await schema.validateAsync(req.body);
-        const createProduct = await productsRepository.addProductToSellList(req.body, id);
-        for (file of files) {
+        yield schema.validateAsync(req.body);
+        const createProduct = yield productsRepository.addProductToSellList(req.body, id);
+        for (const file of files) {
             const url = `productImages/${id}/${file.filename}`;
-            await imagesRepository.createImage(url, createProduct.id);
+            yield imagesRepository.createImage(url, createProduct.id);
         }
-        const finalProduct = await productsRepository.findProductById(createProduct.id);
+        const finalProduct = yield productsRepository.findProductById(createProduct.id);
         res.status(201);
         res.send(finalProduct);
     }
     catch (error) {
         next(error);
     }
-};
-const addMoreImagesToProduct = async (req, res, next) => {
+});
+exports.addProductToSellList = addProductToSellList;
+// TODO: REVISAR TIPOS
+const addMoreImagesToProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.auth;
         const { files } = req;
         const { id } = req.params;
-        const searchProduct = await productsRepository.findProductById(id);
+        const searchProduct = yield productsRepository.findProductById(id);
         if (!searchProduct) {
             const err = new Error('No existe el producto');
             err.code = 404;
@@ -71,9 +91,9 @@ const addMoreImagesToProduct = async (req, res, next) => {
             errorAlreadySold.code = 403;
             throw errorAlreadySold;
         }
-        for (image of files) {
+        for (const image of files) {
             const url = `static/images/${id}/${image.filename}`;
-            const addImage = await imagesRepository.createImage(url, id);
+            const addImage = yield imagesRepository.createImage(url, id);
         }
         res.status(201);
         res.send('Imagenes subidas correctamente!');
@@ -81,16 +101,18 @@ const addMoreImagesToProduct = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-const removeProductbyId = async (req, res, next) => {
+});
+exports.addMoreImagesToProduct = addMoreImagesToProduct;
+// TODO: REVISAR TIPOS
+const removeProductbyId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.auth;
         const { id } = req.params;
-        const schema = Joi.object({
-            id: Joi.number().min(1),
+        const schema = joi_1.default.object({
+            id: joi_1.default.number().min(1),
         });
-        await schema.validateAsync({ id });
-        const searchProduct = await productsRepository.findProductById(id);
+        yield schema.validateAsync({ id });
+        const searchProduct = yield productsRepository.findProductById(id);
         if (!searchProduct) {
             const err = new Error('No existe el producto');
             err.code = 404;
@@ -101,33 +123,35 @@ const removeProductbyId = async (req, res, next) => {
             errorAuth.code = 403;
             throw errorAuth;
         }
-        const images = await imagesRepository.findImageById(id);
-        images.forEach(async (image) => {
+        const images = yield imagesRepository.findImageById(id);
+        images.forEach((image) => __awaiter(void 0, void 0, void 0, function* () {
             const { url } = image;
-            await fs.unlink(url);
-        });
-        await productsRepository.removeProductById(id);
+            yield fs.unlink(url);
+        }));
+        yield productsRepository.removeProductById(id);
         res.status(204);
         res.send();
     }
     catch (error) {
         next(error);
     }
-};
-const updateProduct = async (req, res, next) => {
+});
+exports.removeProductbyId = removeProductbyId;
+// TODO: REVISAR TIPOS
+const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.auth;
         const { id } = req.params;
-        const schema = Joi.object({
-            name: Joi.string().min(1).max(20),
-            status: Joi.string().min(1).max(10),
-            location: Joi.string().min(1),
-            price: Joi.number().min(1).max(100000),
-            description: Joi.string().min(1).max(500),
-            subcategory: Joi.string().min(1).max(15),
+        const schema = joi_1.default.object({
+            name: joi_1.default.string().min(1).max(20),
+            status: joi_1.default.string().min(1).max(10),
+            location: joi_1.default.string().min(1),
+            price: joi_1.default.number().min(1).max(100000),
+            description: joi_1.default.string().min(1).max(500),
+            subcategory: joi_1.default.string().min(1).max(15),
         });
-        await schema.validateAsync(req.body);
-        const searchProduct = await productsRepository.findProductById(id);
+        yield schema.validateAsync(req.body);
+        const searchProduct = yield productsRepository.findProductById(id);
         if (!searchProduct) {
             const err = new Error('No existe el producto');
             err.code = 404;
@@ -143,23 +167,25 @@ const updateProduct = async (req, res, next) => {
             errorAlreadySold.code = 403;
             throw errorAlreadySold;
         }
-        const product = await productsRepository.updateProduct(req.body, id);
+        const product = yield productsRepository.updateProduct(req.body, id);
         res.send(product);
     }
     catch (error) {
         next(error);
     }
-};
-const updateSaleStatus = async (req, res, next) => {
+});
+exports.updateProduct = updateProduct;
+// TODO: REVISAR TIPOS
+const updateSaleStatus = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id: userId } = req.auth;
         const { id } = req.params;
         const { sale_status } = req.body;
-        const schema = Joi.object({
-            sale_status: Joi.string().required(),
+        const schema = joi_1.default.object({
+            sale_status: joi_1.default.string().required(),
         });
-        await schema.validateAsync({ sale_status });
-        const searchProduct = await productsRepository.findProductById(id);
+        yield schema.validateAsync({ sale_status });
+        const searchProduct = yield productsRepository.findProductById(id);
         if (!searchProduct) {
             const err = new Error('No existe el producto');
             err.code = 404;
@@ -170,17 +196,18 @@ const updateSaleStatus = async (req, res, next) => {
             errorAuth.code = 403;
             throw errorAuth;
         }
-        const update = await productsRepository.updateSaleStatus(sale_status, id);
+        const update = yield productsRepository.updateSaleStatus(sale_status, id);
         res.send(update);
     }
     catch (error) {
         next(error);
     }
-};
-const getSingleProduct = async (req, res, next) => {
+});
+exports.updateSaleStatus = updateSaleStatus;
+const getSingleProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const product = await productsRepository.getSingleProduct(id);
+        const product = yield productsRepository.getSingleProduct(id);
         if (!product) {
             const err = new Error('No existe el producto');
             err.code = 404;
@@ -191,50 +218,42 @@ const getSingleProduct = async (req, res, next) => {
     catch (error) {
         next(error);
     }
-};
-const searchCatalogue = async (req, res, next) => {
+});
+exports.getSingleProduct = getSingleProduct;
+const searchCatalogue = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { term } = req.params;
-        const data = await productsRepository.searchCatalogue(term);
+        const data = yield productsRepository.searchCatalogue(term);
         res.send(data);
     }
     catch (error) {
         next(error);
     }
-};
-const getTopProducts = async (req, res, next) => {
+});
+exports.searchCatalogue = searchCatalogue;
+const getTopProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = await productsRepository.getTopProducts();
+        const data = yield productsRepository.getTopProducts();
         res.send(data);
     }
     catch (error) {
         next(error);
     }
-};
-const getSimilarProducts = async (req, res, next) => {
+});
+exports.getTopProducts = getTopProducts;
+const getSimilarProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { subcategory } = req.params;
-        const schema = Joi.object({
-            subcategory: Joi.string().required(),
+        const schema = joi_1.default.object({
+            subcategory: joi_1.default.string().required(),
         });
-        await schema.validateAsync({ subcategory });
-        const data = await productsRepository.getSimilarProducts(subcategory);
+        yield schema.validateAsync({ subcategory });
+        const data = yield productsRepository.getSimilarProducts(subcategory);
         res.send(data);
     }
     catch (error) {
         next(error);
     }
-};
-module.exports = {
-    addProductToSellList,
-    getCatalogue,
-    removeProductbyId,
-    updateProduct,
-    getSingleProduct,
-    updateSaleStatus,
-    searchCatalogue,
-    addMoreImagesToProduct,
-    getCatalogueByUserId,
-    getTopProducts,
-    getSimilarProducts,
-};
+});
+exports.getSimilarProducts = getSimilarProducts;
+//# sourceMappingURL=products-controllers.js.map

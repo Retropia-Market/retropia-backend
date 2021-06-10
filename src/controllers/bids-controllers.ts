@@ -32,7 +32,7 @@ const placeBid: RequestHandler = async (req: any, res, next) => {
     }
 
     const bidExist = await bidsRepository.checkBidData(id, productId);
-    if (bidExist.length) {
+    if ((bidExist as []).length) {
       const err: ErrnoException = new Error(
         'Ya has ofertado por este producto.'
       );
@@ -81,7 +81,9 @@ const acceptBid: RequestHandler = async (req: any, res, next) => {
       throw err;
     }
 
-    const productBids = await bidsRepository.getProductsBidsById(product.id);
+    const productBids: any = await bidsRepository.getProductsBidsById(
+      product.id
+    );
     for (const bid of productBids) {
       bidsRepository.declineBid(bid.id);
     }

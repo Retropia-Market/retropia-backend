@@ -1,4 +1,4 @@
-import database from '../infrastructure';
+import { database } from '../infrastructure';
 import { findImageById } from './images-repository';
 
 /**
@@ -8,7 +8,7 @@ import { findImageById } from './images-repository';
  */
 const getReviewByProductId = async (id) => {
   const getReviewByProductQuery = 'SELECT * FROM reviews WHERE product_id = ?';
-  const [getReviewbyProductData] = await database.pool.query(
+  const [getReviewbyProductData] = await database.query(
     getReviewByProductQuery,
     [id]
   );
@@ -24,7 +24,7 @@ const getReviewByProductId = async (id) => {
 const addReviewToProduct = async (data, productId, userId) => {
   const addReviewToProductQuery =
     'INSERT INTO reviews (product_id, user_id, review_rating, review_text, review_date) VALUES (?, ?, ?, ?, curdate())';
-  await database.pool.query(addReviewToProductQuery, [
+  await database.query(addReviewToProductQuery, [
     productId,
     userId,
     data.review_rating,
@@ -44,7 +44,7 @@ const updateReview = async (data, productId) => {
   //TODO - DEFINE FUNC
   const updateReviewToProductQuery =
     'UPDATE reviews SET review_rating = ?, review_text = ? WHERE product_id = ?';
-  await database.pool.query(updateReviewToProductQuery, [
+  await database.query(updateReviewToProductQuery, [
     data.review_rating,
     data.review_text,
     productId,
@@ -59,7 +59,7 @@ const updateReview = async (data, productId) => {
  */
 const deleteReview = async (productId) => {
   const deleteReviewQuery = 'DELETE FROM reviews where product_id = ?';
-  await database.pool.query(deleteReviewQuery, [productId]);
+  await database.query(deleteReviewQuery, [productId]);
 };
 
 /**
@@ -70,16 +70,16 @@ const deleteReview = async (productId) => {
 const getAvgReviewScoreByUser = async (userId) => {
   const queryGetRating =
     'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, user_id FROM reviews WHERE user_id = ?';
-  const [result] = await database.pool.query(queryGetRating, userId);
+  const [result] = await database.query(queryGetRating, userId);
   return result[0];
 };
 
 const getMadeReviews = async (userId) => {
   const queryMade =
     'SELECT products.id AS product_id, products.seller_id , users.username as seller_name, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = products.seller_id WHERE reviews.user_id = ?';
-  const [result] = await database.pool.query(queryMade, userId);
+  const [result]: any = await database.query(queryMade, userId);
   for (const prod of result) {
-    const images = await findImageById(prod.product_id);
+    const images: any = await findImageById(prod.product_id);
     prod.images = [...images];
   }
   return result;
@@ -88,10 +88,10 @@ const getMadeReviews = async (userId) => {
 const getReceivedReviews = async (userId) => {
   const queryMade =
     'SELECT products.id AS product_id, products.seller_id, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id, users.username as reviewer_name FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = reviews.user_id WHERE products.seller_id = ?';
-  const [result] = await database.pool.query(queryMade, userId);
+  const [result]: any = await database.query(queryMade, userId);
 
   for (const prod of result) {
-    const images = await findImageById(prod.product_id);
+    const images: any = await findImageById(prod.product_id);
     prod.images = [...images];
   }
   return result;

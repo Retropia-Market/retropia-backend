@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import path from 'path';
 
-const {
+import {
   usersController,
   productsController,
   reviewsController,
@@ -11,8 +11,8 @@ const {
   favouritesController,
   categoriesController,
   gamesApiController,
-  chatController,
-} = require('./controllers');
+  // chatController,
+} from './controllers';
 
 import {
   validateAuthorization,
@@ -62,7 +62,7 @@ app.patch(
 app.post(
   '/users/:id/update-img',
   validateAuthorization,
-  uploadUserImg.uploadUserImg.single('userImg'),
+  uploadUserImg.single('userImg'),
   usersController.updateImage
 );
 // Borrar imagen de usuario
@@ -263,35 +263,35 @@ app.get('/categories/', categoriesController.getCategories);
 
 //Get contacts with lastMessage
 
-app.get(
-  '/chats/:userId/get-contacts',
-  validateAuthorization,
-  chatController.getContacts
-);
+// app.get(
+//   '/chats/:userId/get-contacts',
+//   validateAuthorization,
+//   chatController.getContacts
+// );
 
-// Get messages between two users
+// // Get messages between two users
 
-app.get(
-  '/chats/:srcId/get-messages/:dstId',
-  validateAuthorization,
-  chatController.getMessages
-);
+// app.get(
+//   '/chats/:srcId/get-messages/:dstId',
+//   validateAuthorization,
+//   chatController.getMessages
+// );
 
-// Add user to contacts
+// // Add user to contacts
 
-app.post(
-  '/chats/:srcId/add-contact/:dstId',
-  validateAuthorization,
-  chatController.addContact
-);
+// app.post(
+//   '/chats/:srcId/add-contact/:dstId',
+//   validateAuthorization,
+//   chatController.addContact
+// );
 
-// Send message to user
+// // Send message to user
 
-app.post(
-  '/chats/:srcId/send-message/:dstId/',
-  validateAuthorization,
-  chatController.addMessage
-);
+// app.post(
+//   '/chats/:srcId/send-message/:dstId/',
+//   validateAuthorization,
+//   chatController.addMessage
+// );
 
 //EXTERNAL APIS
 

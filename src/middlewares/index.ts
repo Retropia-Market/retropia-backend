@@ -1,6 +1,6 @@
 import { validateAuthorization } from './validate-auth';
 import { uploadProductImage } from './uploadProductImg';
-import { uploadUserImg } from './upload-img';
+import { uploadUserImg } from './uploadUserImg';
 import { isCorrectUser } from './isCorrectUser';
 
 export {

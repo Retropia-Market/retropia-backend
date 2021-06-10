@@ -1,5 +1,5 @@
 const fs = require('fs').promises;
-import database from '../infrastructure';
+import { database } from '../infrastructure';
 
 /**############################################################################
  *
@@ -7,12 +7,12 @@ import database from '../infrastructure';
  * @returns {array} users registrados
  */
 
-async function getUsers() {
+const getUsers = async () => {
   const query = 'SELECT * FROM users';
-  const [users] = await database.pool.query(query);
+  const [users] = await database.query(query);
 
   return users;
-}
+};
 
 /**#############################################################################
  *
@@ -23,7 +23,7 @@ async function getUsers() {
 
 async function getUserById(id) {
   const query = 'SELECT * FROM users WHERE id = ?';
-  const [user] = await database.pool.query(query, id);
+  const [user] = await database.query(query, id);
 
   return user[0];
 }
@@ -37,7 +37,7 @@ async function getUserById(id) {
 
 async function findUserByEmail(email) {
   const query = 'SELECT * FROM users WHERE email = ?';
-  const [users] = await database.pool.query(query, email);
+  const [users] = await database.query(query, email);
 
   return users[0];
 }
@@ -51,7 +51,7 @@ async function findUserByEmail(email) {
 
 async function findUserById(id) {
   const query = 'SELECT * FROM users WHERE id = ?';
-  const [users] = await database.pool.query(query, id);
+  const [users] = await database.query(query, id);
 
   return users[0];
 }
@@ -66,7 +66,7 @@ async function findUserById(id) {
 async function registerUser(data) {
   const query =
     'INSERT INTO users (username, password, email, birth_date, firstname, lastname) VALUES (?,?,?,?,?,?)';
-  await database.pool.query(query, [
+  await database.query(query, [
     data.username,
     data.password,
     data.email,
@@ -95,7 +95,7 @@ async function updateProfile(data, id) {
 
     if (value !== undefined && value.length) {
       const updateProfileQuery = `UPDATE users SET ${column} = '${value}' WHERE id = '${userId}'`;
-      await database.pool.query(updateProfileQuery);
+      await database.query(updateProfileQuery);
     }
   };
 
@@ -114,7 +114,7 @@ async function updateProfile(data, id) {
 
 async function updatePassword(hashedPassword, id) {
   const updatePasswordQuery = 'UPDATE users SET password = ? WHERE id = ?';
-  await database.pool.query(updatePasswordQuery, [hashedPassword, id]);
+  await database.query(updatePasswordQuery, [hashedPassword, id]);
 
   return findUserById(id);
 }
@@ -130,13 +130,13 @@ async function updatePassword(hashedPassword, id) {
 async function updateImage(id, imagePath) {
   // obtener path a la imagen anterior del usuario
   const searchQuery = 'SELECT image FROM users WHERE id = ?';
-  const [[{ image }]] = await database.pool.query(searchQuery, id);
+  const [[{ image }]]: any = await database.query(searchQuery, id);
   // borrar imagen anterior si existe
   image !== null ? await fs.unlink(image) : image;
 
   // acualizar la path a la imagen en la info del usuario
   const updateQuery = 'UPDATE users SET image = ? WHERE id = ?';
-  await database.pool.query(updateQuery, [imagePath, id]);
+  await database.query(updateQuery, [imagePath, id]);
 
   return findUserById(id);
 }
@@ -151,13 +151,13 @@ async function updateImage(id, imagePath) {
 async function deleteImage(id) {
   // Obtener path a la imagen del usuario
   const searchQuery = 'SELECT image FROM users WHERE id = ?';
-  const [[{ image }]] = await database.pool.query(searchQuery, id);
+  const [[{ image }]]: any = await database.query(searchQuery, id);
   // borrar la imagen si existe
   image !== null ? await fs.unlink(image) : image;
 
   // eliminar path vacia de la informacion del usuario
   const updateQuery = 'UPDATE users SET image = null WHERE id = ?';
-  await database.pool.query(updateQuery, id);
+  await database.query(updateQuery, id);
 
   return findUserById(id);
 }

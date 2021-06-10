@@ -1,40 +1,57 @@
-const Joi = require('joi');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteImage = exports.updateImage = exports.updatePassword = exports.updateProfile = exports.userLogin = exports.registerUser = exports.getUserById = exports.getUsers = void 0;
+const joi_1 = __importDefault(require("joi"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const { isCorrectUser } = require('../middlewares');
 const { usersRepository } = require('../repositories');
-async function getUsers(req, res, next) {
+const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const users = await usersRepository.getUsers();
+        const users = yield usersRepository.getUsers();
         res.send(users);
     }
     catch (error) {
         next(error);
     }
-}
-async function getUserById(req, res, next) {
+});
+exports.getUsers = getUsers;
+const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const user = await usersRepository.getUserById(id);
+        const user = yield usersRepository.getUserById(id);
         res.send(user);
     }
     catch (error) {
         next(error);
     }
-}
-async function registerUser(req, res, next) {
+});
+exports.getUserById = getUserById;
+const registerUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = req.body;
-        const schema = Joi.object({
-            username: Joi.string().required(),
-            password: Joi.string().min(8).max(20).alphanum().required(),
-            repeatedPassword: Joi.string().min(8).max(20).alphanum().required(),
-            email: Joi.string().email().required(),
-            birthDate: Joi.string().required(),
-            firstName: Joi.string().required(),
-            lastName: Joi.string().required(),
+        const schema = joi_1.default.object({
+            username: joi_1.default.string().required(),
+            password: joi_1.default.string().min(8).max(20).alphanum().required(),
+            repeatedPassword: joi_1.default.string().min(8).max(20).alphanum().required(),
+            email: joi_1.default.string().email().required(),
+            birthDate: joi_1.default.string().required(),
+            firstName: joi_1.default.string().required(),
+            lastName: joi_1.default.string().required(),
         });
-        await schema.validateAsync(data);
+        yield schema.validateAsync(data);
         // Comprobar si las passwords coinciden
         if (data.password !== data.repeatedPassword) {
             const err = new Error('Las contraseñas deben ser iguales');
@@ -42,17 +59,17 @@ async function registerUser(req, res, next) {
             throw err;
         }
         // Comprobar si ya existe un usuario con ese email
-        const user = await usersRepository.findUserByEmail(data.email);
+        const user = yield usersRepository.findUserByEmail(data.email);
         if (user) {
             const err = new Error('Parece que ya existe un usuario con ese correo.');
             err.code = 409;
             throw err;
         }
         // hasheo de la password
-        data.password = await bcrypt.hash(data.password, 10);
-        const createdUser = await usersRepository.registerUser(data);
+        data.password = yield bcryptjs_1.default.hash(data.password, 10);
+        const createdUser = yield usersRepository.registerUser(data);
         const tokenPayload = { id: createdUser.id };
-        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign(tokenPayload, process.env.JWT_SECRET, {
             expiresIn: '30d',
         });
         res.status(201);
@@ -75,16 +92,17 @@ async function registerUser(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function userLogin(req, res, next) {
+});
+exports.registerUser = registerUser;
+const userLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
-        const schema = Joi.object({
-            email: Joi.string().email().required(),
-            password: Joi.string().required(),
+        const schema = joi_1.default.object({
+            email: joi_1.default.string().email().required(),
+            password: joi_1.default.string().required(),
         });
-        await schema.validateAsync({ email, password });
-        const loggedUser = await usersRepository.findUserByEmail(email);
+        yield schema.validateAsync({ email, password });
+        const loggedUser = yield usersRepository.findUserByEmail(email);
         // Comprobar que existe un usuario con ese email
         if (!loggedUser) {
             const err = new Error('No existe usuario con ese email');
@@ -92,15 +110,15 @@ async function userLogin(req, res, next) {
             throw err;
         }
         // Comprobar que la password del usuario es correcta
-        const isValidPassword = await bcrypt.compare(password, loggedUser.password);
+        const isValidPassword = yield bcryptjs_1.default.compare(password, loggedUser.password);
         if (!isValidPassword) {
-            const error = new Error('El password no es válido');
-            error.code = 401;
-            throw error;
+            const err = new Error('El password no es válido');
+            err.code = 401;
+            throw err;
         }
         // Crear el token de autenticacion para el usuario
         const tokenPayload = { id: loggedUser.id };
-        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign(tokenPayload, process.env.JWT_SECRET, {
             expiresIn: '30d',
         });
         res.send({
@@ -122,25 +140,29 @@ async function userLogin(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function updateProfile(req, res, next) {
+});
+exports.userLogin = userLogin;
+// TODO: REVISAR TIPOS
+const updateProfile = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const data = req.body;
+        // TODO comprobar que tanto email como idparam existen
         // Comprobar que el id es correcto
+        //TODO no comprueba bien la igualdad de IDs
         isCorrectUser(id, req.auth.id);
-        const schema = Joi.object({
-            username: Joi.string().max(30).allow(''),
-            email: Joi.string().email().max(50).allow(''),
-            firstname: Joi.string().max(50).allow(''),
-            lastname: Joi.string().max(50).allow(''),
-            location: Joi.string().max(100).allow(''),
-            bio: Joi.string().max(500).allow(''),
-            phone_number: Joi.string().max(9).allow(''),
-            birth_date: Joi.string().allow(''),
+        const schema = joi_1.default.object({
+            username: joi_1.default.string().max(30).allow(''),
+            email: joi_1.default.string().email().max(50).allow(''),
+            firstname: joi_1.default.string().max(50).allow(''),
+            lastname: joi_1.default.string().max(50).allow(''),
+            location: joi_1.default.string().max(100).allow(''),
+            bio: joi_1.default.string().max(500).allow(''),
+            phone_number: joi_1.default.string().max(9).allow(''),
+            birth_date: joi_1.default.string().allow(''),
         });
-        await schema.validateAsync(data);
-        const user = await usersRepository.updateProfile(data, id);
+        yield schema.validateAsync(data);
+        const user = yield usersRepository.updateProfile(data, id);
         res.status(201);
         res.send({
             id: user.id,
@@ -158,16 +180,18 @@ async function updateProfile(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function updatePassword(req, res, next) {
+});
+exports.updateProfile = updateProfile;
+// TODO: REVISAR TIPOS
+const updatePassword = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const data = req.body;
         // Comprobar que el id es correcto
         isCorrectUser(id, req.auth.id);
         // Comprobar que la password antigua es la correcta
-        let user = await usersRepository.findUserById(id);
-        const isValidPassword = await bcrypt.compare(data.oldPassword, user.password);
+        let user = yield usersRepository.findUserById(id);
+        const isValidPassword = yield bcryptjs_1.default.compare(data.oldPassword, user.password);
         if (!isValidPassword) {
             const err = new Error('La contrasenia actual es incorrecta');
             err.code = 401;
@@ -175,12 +199,12 @@ async function updatePassword(req, res, next) {
             throw err;
         }
         // validar nueva password
-        const schema = Joi.object({
-            oldPassword: Joi.string().required(),
-            newPassword: Joi.string().min(8).max(20).alphanum().required(),
-            repeatedNewPassword: Joi.string().min(8).max(20).alphanum().required(),
+        const schema = joi_1.default.object({
+            oldPassword: joi_1.default.string().required(),
+            newPassword: joi_1.default.string().min(8).max(20).alphanum().required(),
+            repeatedNewPassword: joi_1.default.string().min(8).max(20).alphanum().required(),
         });
-        await schema.validateAsync(data);
+        yield schema.validateAsync(data);
         // Comprobar que las nuevas password nuevas coinciden
         if (data.newPassword !== data.repeatedNewPassword) {
             const err = new Error('Las constrasenias no coinciden');
@@ -188,8 +212,8 @@ async function updatePassword(req, res, next) {
             throw err;
         }
         // Actualizar la password en la database
-        const hashedPassword = await bcrypt.hash(data.newPassword, 10);
-        user = await usersRepository.updatePassword(hashedPassword, id);
+        const hashedPassword = yield bcryptjs_1.default.hash(data.newPassword, 10);
+        user = yield usersRepository.updatePassword(hashedPassword, id);
         res.status(201);
         res.send({
             user: user.username,
@@ -199,12 +223,14 @@ async function updatePassword(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function updateImage(req, res, next) {
+});
+exports.updatePassword = updatePassword;
+// TODO: REVISAR TIPOS
+const updateImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         isCorrectUser(id, req.auth.id); // Comprobar que el id es correcto
-        const user = await usersRepository.updateImage(req.auth.id, req.file.path);
+        const user = yield usersRepository.updateImage(req.auth.id, req.file.path);
         res.status(201);
         res.send({
             id: user.id,
@@ -222,12 +248,14 @@ async function updateImage(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-async function deleteImage(req, res, next) {
+});
+exports.updateImage = updateImage;
+// TODO: REVISAR TIPOS
+const deleteImage = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         isCorrectUser(id, req.auth.id); // Comprobar que el id es correcto
-        const user = await usersRepository.deleteImage(id);
+        const user = yield usersRepository.deleteImage(id);
         res.status(201); // correct status: 204
         res.send({
             id: user.id,
@@ -245,14 +273,6 @@ async function deleteImage(req, res, next) {
     catch (error) {
         next(error);
     }
-}
-module.exports = {
-    getUsers,
-    getUserById,
-    registerUser,
-    userLogin,
-    updateProfile,
-    updatePassword,
-    updateImage,
-    deleteImage,
-};
+});
+exports.deleteImage = deleteImage;
+//# sourceMappingURL=users-controller.js.map

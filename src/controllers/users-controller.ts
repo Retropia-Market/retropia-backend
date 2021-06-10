@@ -155,7 +155,10 @@ const updateProfile: RequestHandler = async (req: any, res, next) => {
     const { id } = req.params;
     const data = req.body;
 
+    // TODO comprobar que tanto email como idparam existen
+
     // Comprobar que el id es correcto
+    //TODO no comprueba bien la igualdad de IDs
     isCorrectUser(id, req.auth.id);
 
     const schema = Joi.object({

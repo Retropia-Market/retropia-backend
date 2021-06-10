@@ -1,6 +1,6 @@
 import path from 'path';
 import multer from 'multer';
-import { v4 as uuidv4 } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 
 export const uploadUserImg = multer({
   storage: multer.diskStorage({

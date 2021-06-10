@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --silent",
     "start": "node dist/server.js",
-    "dev": "nodemon dist/server.js",
+    "dev": "ts-node-dev server.ts",
     "build": "tsc -p tsconfig.json"
   },
   "keywords": [],
@@ -45,6 +45,7 @@
     "@types/node": "^15.12.2",
     "jest": "^27.0.1",
     "supertest": "^6.1.3",
+    "ts-node-dev": "^1.1.6",
     "typescript": "^4.3.2"
   }
 }

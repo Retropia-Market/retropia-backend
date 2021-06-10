@@ -1,7 +1,7 @@
-import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
+import { RequestHandler } from 'express';
 
-import database from '../infrastructure';
+import { database } from '../infrastructure';
 import { ErrnoException } from '../models/Error';
 
 // TODO: REVISAR TIPOS
@@ -25,9 +25,9 @@ export const validateAuthorization: RequestHandler = async (
     // Comprobamos que el usuario para el que fue emitido
     // el token todavía existe.
     const query = 'SELECT * FROM users WHERE id = ?';
-    const [users] = await database.pool.query(query, decodedToken.id);
+    const [user] = await database.query(query, decodedToken.id);
 
-    if (!users || !users.length) {
+    if (!user) {
       const error: ErrnoException = new Error('El usuario ya no existe');
       error.code = 401;
       throw error;

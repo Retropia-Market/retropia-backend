@@ -1,4 +1,4 @@
-import database from '../infrastructure';
+import { database } from '../infrastructure';
 import { getSingleProduct } from './products-repository';
 
 /**############################################################################
@@ -12,7 +12,7 @@ import { getSingleProduct } from './products-repository';
 async function userHasFavourite(userId, productId) {
   const query = 'SELECT * FROM favourites WHERE user_id = ? AND product_id = ?';
 
-  const [favourite] = await database.pool.query(query, [userId, productId]);
+  const [favourite] = await database.query(query, [userId, productId]);
 
   return favourite[0];
 }
@@ -27,9 +27,9 @@ async function userHasFavourite(userId, productId) {
 
 async function addFavourite(userId, productId) {
   const query = 'INSERT INTO favourites (product_id, user_id) VALUES (?,?)';
-  const [result] = await database.pool.query(query, [productId, userId]);
+  const [result] = await database.query(query, [productId, userId]);
 
-  return getFavouriteById(result.insertId);
+  return getFavouriteById((result as { insertId }).insertId);
 }
 
 /**############################################################################
@@ -42,7 +42,7 @@ async function addFavourite(userId, productId) {
 
 async function removeFavourite(userId, productId) {
   const query = 'DELETE FROM favourites WHERE user_id = ? AND product_id = ?';
-  await database.pool.query(query, [userId, productId]);
+  await database.query(query, [userId, productId]);
 
   return getUserFavourites(userId);
 }
@@ -56,10 +56,10 @@ async function removeFavourite(userId, productId) {
 
 async function getUserFavourites(userId) {
   const query = 'SELECT * FROM favourites WHERE user_id = ?';
-  const [favouritesData] = await database.pool.query(query, userId);
+  const [favouritesData] = await database.query(query, userId);
   const favourites: {}[] = [];
 
-  for (const favourite of favouritesData) {
+  for (const favourite of favouritesData as { product_id }[]) {
     const product = await getSingleProduct(favourite.product_id);
     favourites.push(product);
   }
@@ -76,7 +76,7 @@ async function getUserFavourites(userId) {
 
 async function getFavouriteById(favouriteId) {
   const query = 'SELECT * FROM favourites WHERE id = ?';
-  const [favourite] = await database.pool.query(query, favouriteId);
+  const [favourite] = await database.query(query, favouriteId);
 
   return favourite[0];
 }
