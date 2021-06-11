@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.gamesApiController = exports.categoriesController = exports.favouritesController = exports.bidsController = exports.reviewsController = exports.productsController = exports.usersController = void 0;
+exports.chatController = exports.gamesApiController = exports.categoriesController = exports.favouritesController = exports.bidsController = exports.reviewsController = exports.productsController = exports.usersController = void 0;
 const usersController = __importStar(require("./users-controller"));
 exports.usersController = usersController;
 const reviewsController = __importStar(require("./reviews-controller"));
@@ -34,4 +34,6 @@ const categoriesController = __importStar(require("./categories-controller"));
 exports.categoriesController = categoriesController;
 const gamesApiController = __importStar(require("./gamesapi-controller"));
 exports.gamesApiController = gamesApiController;
+const chatController = __importStar(require("./chat-controller"));
+exports.chatController = chatController;
 //# sourceMappingURL=index.js.map

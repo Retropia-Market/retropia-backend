@@ -21,7 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 const http = __importStar(require("http"));
-const WS = require('./ws');
+const WS = require('./src/ws');
 const { app } = require('./src/app');
 const { PORT } = process.env;
 const server = http.createServer(app);

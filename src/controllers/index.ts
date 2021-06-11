@@ -5,7 +5,7 @@ import * as bidsController from './bids-controllers';
 import * as favouritesController from './favourites-controller';
 import * as categoriesController from './categories-controller';
 import * as gamesApiController from './gamesapi-controller';
-// import * as chatController from './chat-controller';
+import * as chatController from './chat-controller';
 
 export {
   usersController,
@@ -15,5 +15,5 @@ export {
   favouritesController,
   categoriesController,
   gamesApiController,
-  // chatController,
+  chatController,
 };

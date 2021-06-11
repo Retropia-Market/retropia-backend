@@ -1,7 +1,7 @@
-import { Request, RequestHandler } from 'express';
-import Joi from 'joi';
-import { ErrnoException } from '../models/Error';
+import { RequestHandler } from 'express';
+import * as Joi from 'joi';
 
+import { ErrnoException } from '../models/Error';
 import { bidsRepository, productsRepository } from '../repositories';
 
 // TODO: REVISAR TIPOS
