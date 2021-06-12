@@ -17,10 +17,39 @@ const getLastMessages = async (userId) => {
   return result;
 };
 
-const getContact = async (userId) => {
-  const query = 'SELECT id, username, image FROM users WHERE id = ?';
-  const [result] = await database.query(query, userId);
-  return result[0];
+// const getContact = async (userId) => {
+//   const query = 'SELECT id, username, image FROM users WHERE id = ?';
+//   const [result] = await database.query(query, userId);
+//   return result[0];
+// };
+
+const getContactList = async (id) => {
+  try {
+    const contacts: any = await getContacts(id);
+    const messages: any = await getLastMessages(id);
+
+    const contact = contacts.map((contact) => {
+      const m = messages.find(
+        (message) =>
+          (message.src_id === contact.user_id_1 &&
+            message.dst_id === contact.user_id_2) ||
+          (message.src_id === contact.user_id_2 &&
+            message.dst_id === contact.user_id_1)
+      );
+      return { ...contact, lastMessage: m };
+    });
+
+    contact.sort((a, b) => {
+      const ad = (a && a.lastMessage && a.lastMessage.date) || 0;
+      const bd = (b && b.lastMessage && b.lastMessage.date) || 0;
+      if (ad != bd) return ad < bd ? 1 : -1;
+      return a.username < b.username ? 1 : -1;
+    });
+
+    return contact;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const addContact = async (userId, targetUserId) => {
@@ -29,10 +58,44 @@ const addContact = async (userId, targetUserId) => {
   return result;
 };
 
-const addMessage = async (message, userId, targetUserId) => {
+const addMessage = async (message, source: number, target: number) => {
+  try {
+    const sourceContacts: any = await getContacts(source);
+    const targetContacts: any = await getContacts(target);
+
+    const sourceHasContact = sourceContacts.some(
+      (c) => c.user_id_2 === Number(target)
+    );
+    const targetHasContact = targetContacts.some(
+      (c) => c.user_id_2 === Number(source)
+    );
+
+    !sourceHasContact ? await addContact(source, target) : sourceContacts;
+    !targetHasContact ? await addContact(target, source) : targetContacts;
+
+    const query =
+      'INSERT INTO message(src_id, dst_id, message, date) VALUES (?,?,?, curtime())';
+
+    const [result] = await database.query(query, [source, target, message]);
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const addMessage1 = async (message, userId, targetUserId) => {
   const query =
     'INSERT INTO message(src_id, dst_id, message, date) VALUES (?,?,?, curtime())';
-  const [result] = await database.query(query, [userId, targetUserId, message]);
+  const [{ insertId }]: any = await database.query(query, [
+    userId,
+    targetUserId,
+    message,
+  ]);
+
+  const [[result]]: any = await database.query(
+    'SELECT * FROM message WHERE id = ?',
+    insertId
+  );
   return result;
 };
 
@@ -50,9 +113,10 @@ const getMessages = async (userId, targetUserId) => {
 
 export {
   getContacts,
-  getContact,
   getLastMessages,
+  getContactList,
   addContact,
   addMessage,
   getMessages,
+  addMessage1,
 };

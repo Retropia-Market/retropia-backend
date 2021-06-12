@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,10 +31,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMessages = exports.addMessage = exports.addContact = exports.getContacts = void 0;
+exports.getMessages = exports.addMessage = exports.addContact = exports.getContactList = void 0;
 const joi_1 = __importDefault(require("joi"));
+const ws = __importStar(require("../ws"));
 const repositories_1 = require("../repositories");
-const getContacts = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const getContactList = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
         const { userId } = req.params;
@@ -46,7 +66,7 @@ const getContacts = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         next(error);
     }
 });
-exports.getContacts = getContacts;
+exports.getContactList = getContactList;
 const getMessages = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.auth;
@@ -114,7 +134,7 @@ const addMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { id } = req.auth;
         const { srcId: source, dstId: target } = req.params;
-        const { message } = req.body;
+        const { message: reqMessage } = req.body;
         if (Number(source) !== id) {
             const err = new Error('No tienes los permisos para esta accion');
             err.code = 401;
@@ -132,7 +152,7 @@ const addMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             throw err;
         }
         const messageSchema = joi_1.default.string().required();
-        yield messageSchema.validateAsync(message);
+        yield messageSchema.validateAsync(reqMessage);
         const sourceContacts = yield repositories_1.chatRepository.getContacts(source);
         const targetContacts = yield repositories_1.chatRepository.getContacts(target);
         const sourceHasContact = sourceContacts.some((c) => c.user_id_2 === Number(target));
@@ -143,8 +163,9 @@ const addMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         !targetHasContact
             ? yield repositories_1.chatRepository.addContact(target, source)
             : targetContacts;
-        yield repositories_1.chatRepository.addMessage(message, Number(source), Number(target));
+        const message = yield repositories_1.chatRepository.addMessage1(reqMessage, Number(source), Number(target));
         const updatedMessages = yield repositories_1.chatRepository.getMessages(source, target);
+        ws.send(message);
         res.status(201);
         res.send({
             status: 'OK',

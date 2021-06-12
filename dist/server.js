@@ -21,11 +21,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 const http = __importStar(require("http"));
-const WS = require('./src/ws');
+const ws = __importStar(require("./src/ws"));
 const { app } = require('./src/app');
 const { PORT } = process.env;
 const server = http.createServer(app);
-// WS.init(server);
+ws.init(server);
 server.listen(PORT, () => console.log('server listening on port: ', PORT));
 module.exports = { server };
 //# sourceMappingURL=server.js.map

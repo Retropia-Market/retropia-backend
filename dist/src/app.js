@@ -103,29 +103,13 @@ app.patch('/products/bid/:bidId/modify', middlewares_1.validateAuthorization, co
 app.get('/categories/', controllers_1.categoriesController.getCategories);
 // CHAT ****************************************************************************************************************
 //Get contacts with lastMessage
-// app.get(
-//   '/chats/:userId/get-contacts',
-//   validateAuthorization,
-//   chatController.getContacts
-// );
-// // Get messages between two users
-// app.get(
-//   '/chats/:srcId/get-messages/:dstId',
-//   validateAuthorization,
-//   chatController.getMessages
-// );
-// // Add user to contacts
-// app.post(
-//   '/chats/:srcId/add-contact/:dstId',
-//   validateAuthorization,
-//   chatController.addContact
-// );
-// // Send message to user
-// app.post(
-//   '/chats/:srcId/send-message/:dstId/',
-//   validateAuthorization,
-//   chatController.addMessage
-// );
+app.get('/chats/:userId/get-contacts', middlewares_1.validateAuthorization, controllers_1.chatController.getContactList);
+// Get messages between two users
+app.get('/chats/:srcId/get-messages/:dstId', middlewares_1.validateAuthorization, controllers_1.chatController.getMessages);
+// Add user to contacts
+app.post('/chats/:srcId/add-contact/:dstId', middlewares_1.validateAuthorization, controllers_1.chatController.addContact);
+// Send message to user
+app.post('/chats/:srcId/send-message/:dstId/', middlewares_1.validateAuthorization, controllers_1.chatController.addMessage);
 //EXTERNAL APIS
 app.get('/rawg/search/:game', controllers_1.gamesApiController.getRawgVideoGameInfo);
 app.get('/rawg/platform/', controllers_1.gamesApiController.getRawgConsoleInfo);

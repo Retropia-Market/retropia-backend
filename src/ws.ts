@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import ws from 'ws';
 
-import { chatController } from './controllers';
+import { chatRepository } from './repositories';
+import { findUserById } from './repositories/users-repository';
 const secret = process.env.JWT_SECRET;
 
 // State
@@ -10,9 +11,9 @@ const clients = new Map();
 
 // Actions
 const send = (message) => {
-  const dst = clients.get(message.dst) || [];
-  const src = clients.get(message.src) || [];
-  const sockets = [...src, ...dst];
+  const dst_id = clients.get(message.dst_id) || [];
+  const src_id = clients.get(message.src_id) || [];
+  const sockets = [...src_id, ...dst_id];
   const text = JSON.stringify(message);
   sockets.forEach((c) => c.send(text));
 };
@@ -20,8 +21,11 @@ const send = (message) => {
 const init = (server) => {
   wss = new ws.Server({ server, path: '/ws' });
   wss.on('connection', (socket) => {
+    console.log('new client connected');
     socket.on('message', async (e) => {
+      console.log('new message');
       const data = JSON.parse(e);
+      console.log(data);
       if (!socket.auth) {
         try {
           const uid = parseInt(jwt.verify(data?.auth, secret));
@@ -39,7 +43,7 @@ const init = (server) => {
             })
           );
         } else {
-          const targetUser: any = await chatController.getContacts(data.target);
+          const targetUser: any = await findUserById(data.target);
           if (!targetUser || data.target === socket.auth.uid) {
             socket.send(
               JSON.stringify({
@@ -48,16 +52,18 @@ const init = (server) => {
             );
             return;
           }
-          const message = await chatController.addMessage(
+          const message = await chatRepository.addMessage(
             data.message,
             socket.auth.uid,
             data.target
           );
+          console.log(message);
           send(message);
         }
       }
     });
     socket.on('close', () => {
+      console.log('client disconnected');
       const uid = socket.auth?.uid;
       if (uid) {
         clients.set(
@@ -69,7 +75,4 @@ const init = (server) => {
   });
 };
 
-module.exports = {
-  init,
-  send,
-};
+export { init, send };

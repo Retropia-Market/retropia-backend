@@ -11,7 +11,7 @@ import {
   favouritesController,
   categoriesController,
   gamesApiController,
-  // chatController,
+  chatController,
 } from './controllers';
 
 import {
@@ -263,35 +263,35 @@ app.get('/categories/', categoriesController.getCategories);
 
 //Get contacts with lastMessage
 
-// app.get(
-//   '/chats/:userId/get-contacts',
-//   validateAuthorization,
-//   chatController.getContacts
-// );
+app.get(
+  '/chats/:userId/get-contacts',
+  validateAuthorization,
+  chatController.getContactList
+);
 
-// // Get messages between two users
+// Get messages between two users
 
-// app.get(
-//   '/chats/:srcId/get-messages/:dstId',
-//   validateAuthorization,
-//   chatController.getMessages
-// );
+app.get(
+  '/chats/:srcId/get-messages/:dstId',
+  validateAuthorization,
+  chatController.getMessages
+);
 
-// // Add user to contacts
+// Add user to contacts
 
-// app.post(
-//   '/chats/:srcId/add-contact/:dstId',
-//   validateAuthorization,
-//   chatController.addContact
-// );
+app.post(
+  '/chats/:srcId/add-contact/:dstId',
+  validateAuthorization,
+  chatController.addContact
+);
 
-// // Send message to user
+// Send message to user
 
-// app.post(
-//   '/chats/:srcId/send-message/:dstId/',
-//   validateAuthorization,
-//   chatController.addMessage
-// );
+app.post(
+  '/chats/:srcId/send-message/:dstId/',
+  validateAuthorization,
+  chatController.addMessage
+);
 
 //EXTERNAL APIS
 

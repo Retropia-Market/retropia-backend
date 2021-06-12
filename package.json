@@ -1,7 +1,6 @@
 {
   "name": "endpoints",
   "version": "1.0.0",
-  "main": "controllers.js",
   "scripts": {
     "test": "jest --verbose --detectOpenHandles --silent",
     "start": "node dist/server.js",

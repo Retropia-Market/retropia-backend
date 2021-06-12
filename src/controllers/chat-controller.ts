@@ -1,10 +1,11 @@
 import { RequestHandler } from 'express';
 import Joi from 'joi';
-import { ErrnoException } from 'src/models/Error';
 
+import * as ws from '../ws';
+import { ErrnoException } from 'src/models/Error';
 import { chatRepository, usersRepository } from '../repositories';
 
-const getContacts = async (req: any, res, next) => {
+const getContactList: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { userId } = req.params;
@@ -122,7 +123,7 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
   try {
     const { id } = req.auth;
     const { srcId: source, dstId: target } = req.params;
-    const { message } = req.body;
+    const { message: reqMessage } = req.body;
 
     if (Number(source) !== id) {
       const err: ErrnoException = new Error(
@@ -148,7 +149,7 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
     }
 
     const messageSchema = Joi.string().required();
-    await messageSchema.validateAsync(message);
+    await messageSchema.validateAsync(reqMessage);
 
     const sourceContacts: any = await chatRepository.getContacts(source);
     const targetContacts: any = await chatRepository.getContacts(target);
@@ -167,9 +168,15 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
       ? await chatRepository.addContact(target, source)
       : targetContacts;
 
-    await chatRepository.addMessage(message, Number(source), Number(target));
+    const message: any = await chatRepository.addMessage1(
+      reqMessage,
+      Number(source),
+      Number(target)
+    );
+    console.log(message.date);
     const updatedMessages = await chatRepository.getMessages(source, target);
 
+    ws.send(message);
     res.status(201);
     res.send({
       status: 'OK',
@@ -180,4 +187,4 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
   }
 };
 
-export { getContacts, addContact, addMessage, getMessages };
+export { getContactList, addContact, addMessage, getMessages };
