@@ -17,12 +17,6 @@ const getLastMessages = async (userId) => {
   return result;
 };
 
-// const getContact = async (userId) => {
-//   const query = 'SELECT id, username, image FROM users WHERE id = ?';
-//   const [result] = await database.query(query, userId);
-//   return result[0];
-// };
-
 const getContactList = async (id) => {
   try {
     const contacts: any = await getContacts(id);
