@@ -175,7 +175,7 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
     );
     console.log(message.date);
     const updatedMessages = await chatRepository.getMessages(source, target);
-
+    console.log(message);
     ws.send(message);
     res.status(201);
     res.send({

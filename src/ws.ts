@@ -15,20 +15,19 @@ const send = (message) => {
   const src_id = clients.get(message.src_id) || [];
   const sockets = [...src_id, ...dst_id];
   const text = JSON.stringify(message);
+  console.log(src_id, dst_id, sockets.length);
+  console.log(Array.from(clients.keys()));
   sockets.forEach((c) => c.send(text));
 };
 
 const init = (server) => {
   wss = new ws.Server({ server, path: '/ws' });
   wss.on('connection', (socket) => {
-    console.log('new client connected');
     socket.on('message', async (e) => {
-      console.log('new message');
       const data = JSON.parse(e);
-      console.log(data);
       if (!socket.auth) {
         try {
-          const uid = parseInt(jwt.verify(data?.auth, secret));
+          const uid = parseInt(jwt.verify(data?.auth, secret).id);
           socket.auth = { uid };
           if (!clients.get(uid)) clients.set(uid, []);
           clients.get(uid).push(socket);
