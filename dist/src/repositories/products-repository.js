@@ -134,7 +134,10 @@ const updateProduct = (data, id) => __awaiter(void 0, void 0, void 0, function* 
     for (const bodyKey in data) {
         if (bodyKey != 'subcategory') {
             const updateQuery = `UPDATE products SET ${bodyKey} = ? WHERE id = ?`;
-            const updateData = yield infrastructure_1.database.query(updateQuery, [data[bodyKey], id]);
+            const updateData = yield infrastructure_1.database.query(updateQuery, [
+                data[bodyKey],
+                id,
+            ]);
         }
         else {
             yield updateSubcategory(data, id);
@@ -154,7 +157,11 @@ const updateSaleStatus = (saleStatus, id) => __awaiter(void 0, void 0, void 0, f
     const eventDate = date_fns_1.format(new Date(), 'yyyy/MM/dd');
     const date = saleStatus === 'vendido' ? eventDate : null;
     const updateQuery = 'UPDATE products SET sale_status = ?, sale_date = ? WHERE id = ?';
-    const updateSale = yield infrastructure_1.database.query(updateQuery, [saleStatus, date, id]);
+    const updateSale = yield infrastructure_1.database.query(updateQuery, [
+        saleStatus,
+        date,
+        id,
+    ]);
     return findProductById(id);
 });
 exports.updateSaleStatus = updateSaleStatus;

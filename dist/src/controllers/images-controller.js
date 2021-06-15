@@ -29,7 +29,7 @@ const deleteImageById = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             throw err;
         }
         yield repositories_1.imagesRepository.deleteImageById(id);
-        yield fs.unlink(image.url);
+        yield fs.unlink('src/static/' + image.url);
         res.status(204);
         res.send();
     }
