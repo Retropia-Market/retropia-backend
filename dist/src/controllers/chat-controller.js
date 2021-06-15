@@ -164,7 +164,9 @@ const addMessage = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             ? yield repositories_1.chatRepository.addContact(target, source)
             : targetContacts;
         const message = yield repositories_1.chatRepository.addMessage1(reqMessage, Number(source), Number(target));
+        console.log(message.date);
         const updatedMessages = yield repositories_1.chatRepository.getMessages(source, target);
+        console.log(message);
         ws.send(message);
         res.status(201);
         res.send({

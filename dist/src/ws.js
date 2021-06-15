@@ -27,20 +27,19 @@ const send = (message) => {
     const src_id = clients.get(message.src_id) || [];
     const sockets = [...src_id, ...dst_id];
     const text = JSON.stringify(message);
+    console.log(src_id, dst_id, sockets.length);
+    console.log(Array.from(clients.keys()));
     sockets.forEach((c) => c.send(text));
 };
 exports.send = send;
 const init = (server) => {
     wss = new ws_1.default.Server({ server, path: '/ws' });
     wss.on('connection', (socket) => {
-        console.log('new client connected');
         socket.on('message', (e) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log('new message');
             const data = JSON.parse(e);
-            console.log(data);
             if (!socket.auth) {
                 try {
-                    const uid = parseInt(jsonwebtoken_1.default.verify(data === null || data === void 0 ? void 0 : data.auth, secret));
+                    const uid = parseInt(jsonwebtoken_1.default.verify(data === null || data === void 0 ? void 0 : data.auth, secret).id);
                     socket.auth = { uid };
                     if (!clients.get(uid))
                         clients.set(uid, []);
