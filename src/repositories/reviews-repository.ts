@@ -95,7 +95,23 @@ const getReceivedReviews = async (userId) => {
         const images: any = await findImageById(prod.product_id);
         prod.images = [...images];
     }
+
     //Reviews han sido vistas
+
+    if (result.length >= 1) {
+        const productsIds = result.map((p) => p.product_id);
+        let productsQuery = 'UPDATE reviews SET watched = 1 WHERE';
+        for (let i = 0; i < productsIds.length; i++) {
+            if (i == productsIds.length - 1) {
+                productsQuery =
+                    productsQuery + ` product_id = ${productsIds[i]};`;
+            } else {
+                productsQuery =
+                    productsQuery + ` product_id = ${productsIds[i]} OR `;
+            }
+        }
+        await database.query(productsQuery);
+    }
 
     return result;
 };

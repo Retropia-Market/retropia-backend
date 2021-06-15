@@ -72,7 +72,6 @@ async function getUserBidsById(userId) {
     try {
         const query = `SELECT * FROM bids WHERE user_id = '${userId}';`;
         const [user_bids] = await database.query(query);
-        console.log(user_bids);
         return user_bids;
     } catch (error) {
         console.log(error);
@@ -83,6 +82,23 @@ async function getUserReceivedBidsBySellerId(userId) {
     try {
         const query = `SELECT bids.* FROM bids INNER JOIN products ON bids.product_id = products.id WHERE products.seller_id = '${userId}';`;
         const [user_bids]: Array<any> = await database.query(query);
+
+        //Bids han sido vistas
+
+        if (user_bids.length >= 1) {
+            const productsIds = user_bids.map((p) => p.product_id);
+            let productsQuery = 'UPDATE bids SET watched = 1 WHERE';
+            for (let i = 0; i < productsIds.length; i++) {
+                if (i == productsIds.length - 1) {
+                    productsQuery =
+                        productsQuery + ` product_id = ${productsIds[i]};`;
+                } else {
+                    productsQuery =
+                        productsQuery + ` product_id = ${productsIds[i]} OR `;
+                }
+            }
+            await database.query(productsQuery);
+        }
         return user_bids;
     } catch (error) {
         console.log(error);
