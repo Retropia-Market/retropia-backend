@@ -126,7 +126,7 @@ const removeProductbyId = (req, res, next) => __awaiter(void 0, void 0, void 0, 
         const images = yield imagesRepository.findImageById(id);
         images.forEach((image) => __awaiter(void 0, void 0, void 0, function* () {
             const { url } = image;
-            yield fs.unlink(url);
+            yield fs.unlink('src/static/' + url);
         }));
         yield productsRepository.removeProductById(id);
         res.status(204);

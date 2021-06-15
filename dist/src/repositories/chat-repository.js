@@ -26,11 +26,6 @@ const getLastMessages = (userId) => __awaiter(void 0, void 0, void 0, function* 
     return result;
 });
 exports.getLastMessages = getLastMessages;
-// const getContact = async (userId) => {
-//   const query = 'SELECT id, username, image FROM users WHERE id = ?';
-//   const [result] = await database.query(query, userId);
-//   return result[0];
-// };
 const getContactList = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const contacts = yield getContacts(id);
@@ -81,7 +76,12 @@ const addMessage = (message, source, target) => __awaiter(void 0, void 0, void 0
 exports.addMessage = addMessage;
 const addMessage1 = (message, userId, targetUserId) => __awaiter(void 0, void 0, void 0, function* () {
     const query = 'INSERT INTO message(src_id, dst_id, message, date) VALUES (?,?,?, curtime())';
-    const [result] = yield infrastructure_1.database.query(query, [userId, targetUserId, message]);
+    const [{ insertId }] = yield infrastructure_1.database.query(query, [
+        userId,
+        targetUserId,
+        message,
+    ]);
+    const [[result]] = yield infrastructure_1.database.query('SELECT * FROM message WHERE id = ?', insertId);
     return result;
 });
 exports.addMessage1 = addMessage1;
