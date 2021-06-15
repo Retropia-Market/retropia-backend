@@ -39,7 +39,7 @@ CREATE TABLE `products` (
 CREATE TABLE `products_img` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `product_id` INT NOT NULL,
-    `url` VARCHAR(100) NOT NULL,
+    `url` VARCHAR(500) NOT NULL,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
