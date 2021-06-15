@@ -106,13 +106,14 @@ const addContact: RequestHandler = async (req: any, res, next) => {
       }
     }
 
-    await chatRepository.addContact(source, target);
+    const result = await chatRepository.addContact(source, target);
+    console.log(result);
 
-    const updatedContacts = await chatRepository.getContacts(source);
+    const contact = await usersRepository.findUserById(target);
 
     res.send({
       status: 'OK',
-      contacts: updatedContacts,
+      contact,
     });
   } catch (error) {
     next(error);
@@ -173,9 +174,8 @@ const addMessage: RequestHandler = async (req: any, res, next) => {
       Number(source),
       Number(target)
     );
-    console.log(message.date);
+
     const updatedMessages = await chatRepository.getMessages(source, target);
-    console.log(message);
     ws.send(message);
     res.status(201);
     res.send({

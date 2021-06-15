@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 
 import { RequestHandler } from 'express';
 
@@ -55,7 +56,7 @@ const registerUser: RequestHandler = async (req, res, next) => {
     }
 
     // Comprobar si ya existe un usuario con ese email
-    const user = await usersRepository.findUserByEmail(data.email);
+    const user = await usersRepository.getUserByEmail(data.email);
     if (user) {
       const err: ErrnoException = new Error(
         'Parece que ya existe un usuario con ese correo.'
@@ -87,6 +88,7 @@ const registerUser: RequestHandler = async (req, res, next) => {
         image: createdUser.image,
         phoneNumber: createdUser.phone_number,
         birthDate: createdUser.birth_date,
+        externalUser: createdUser.external_user,
       },
       token,
     });
@@ -106,7 +108,7 @@ const userLogin: RequestHandler = async (req, res, next) => {
 
     await schema.validateAsync({ email, password });
 
-    const loggedUser = await usersRepository.findUserByEmail(email);
+    const loggedUser = await usersRepository.getUserByEmail(email);
 
     // Comprobar que existe un usuario con ese email
     if (!loggedUser) {
@@ -141,6 +143,71 @@ const userLogin: RequestHandler = async (req, res, next) => {
         image: loggedUser.image,
         phoneNumber: loggedUser.phone_number,
         birthDate: loggedUser.birth_date,
+        externalUser: loggedUser.external_user,
+      },
+      token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const userGoogleLogin: RequestHandler = async (req, res, next) => {
+  try {
+    let loggedUser;
+    const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_LOGIN_ID);
+    let { token } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.REACT_APP_GOOGLE_LOGIN_ID,
+    });
+    const { email, name, given_name, family_name, picture, at_hash } =
+      ticket.getPayload();
+
+    const user = await usersRepository.getUserByEmail(email);
+    if (user) {
+      // const userData = {
+      //   username: name.replace(/\s+/g, ''),
+      //   firstname: given_name,
+      //   lastname: family_name,
+      // };
+      // await usersRepository.updateProfile(userData, user.id);
+      // await usersRepository.updateImage(user.id, picture);
+      loggedUser = await usersRepository.getUserById(user.id);
+      console.log(loggedUser);
+    } else {
+      const userData = {
+        //TODO: hacer username unico uuid
+        username: name.replace(/\s+/g, ''),
+        firstName: given_name,
+        lastName: family_name,
+        email: email,
+        password: at_hash,
+      };
+      userData.password = await bcrypt.hash(userData.password, 10);
+      let newUser = await usersRepository.registerUser(userData);
+      newUser = await usersRepository.makeExternalUser(newUser.id);
+      loggedUser = await usersRepository.updateImage(newUser.id, picture);
+    }
+
+    const tokenPayload = { id: loggedUser.id };
+    token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      expiresIn: '30d',
+    });
+
+    res.send({
+      userData: {
+        id: loggedUser.id,
+        username: loggedUser.username,
+        email: loggedUser.email,
+        firstName: loggedUser.firstname,
+        lastName: loggedUser.lastname,
+        location: loggedUser.location,
+        bio: loggedUser.bio,
+        image: loggedUser.image,
+        phoneNumber: loggedUser.phone_number,
+        birthDate: loggedUser.birth_date,
+        externalUser: loggedUser.external_user,
       },
       token,
     });
@@ -188,6 +255,7 @@ const updateProfile: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      externalUser: user.external_user,
     });
   } catch (error) {
     next(error);
@@ -267,6 +335,7 @@ const updateImage: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      externalUser: user.external_user,
     });
   } catch (error) {
     next(error);
@@ -293,6 +362,7 @@ const deleteImage: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      externalUser: user.external_user,
     });
   } catch (error) {
     next(error);
@@ -304,6 +374,7 @@ export {
   getUserById,
   registerUser,
   userLogin,
+  userGoogleLogin,
   updateProfile,
   updatePassword,
   updateImage,

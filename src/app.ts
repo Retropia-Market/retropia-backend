@@ -41,6 +41,9 @@ app.post('/users/register', usersController.registerUser);
 // Login
 app.post('/users/login', usersController.userLogin);
 
+// Google Login
+app.post('/users/login-google', usersController.userGoogleLogin);
+
 // Obtener info de usuario
 app.get('/users/:id', usersController.getUserById);
 

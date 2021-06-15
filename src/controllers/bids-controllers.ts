@@ -55,7 +55,7 @@ const acceptBid: RequestHandler = async (req: any, res, next) => {
     const bidAccepted = await bidsRepository.getBidById(bidId);
 
     const product = await productsRepository.findProductById(
-      bidAccepted.product_id
+      bidAccepted[0].product_id
     );
 
     if (id !== product.seller_id) {

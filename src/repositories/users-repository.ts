@@ -35,7 +35,7 @@ async function getUserById(id) {
  * @returns {object} usuario con email proporcionado
  */
 
-async function findUserByEmail(email) {
+async function getUserByEmail(email) {
   const query = 'SELECT * FROM users WHERE email = ?';
   const [users] = await database.query(query, email);
 
@@ -65,17 +65,17 @@ async function findUserById(id) {
 
 async function registerUser(data) {
   const query =
-    'INSERT INTO users (username, password, email, birth_date, firstname, lastname) VALUES (?,?,?,?,?,?)';
+    'INSERT INTO users (username, password, email, firstname, lastname) VALUES (?,?,?,?,?)';
   await database.query(query, [
     data.username,
     data.password,
     data.email,
-    data.birthDate,
+    // data?.birthDate,
     data.firstName,
     data.lastName,
   ]);
 
-  return findUserByEmail(data.email);
+  return getUserByEmail(data.email);
 }
 
 /**############################################################################
@@ -162,14 +162,21 @@ async function deleteImage(id) {
   return findUserById(id);
 }
 
+async function makeExternalUser(id) {
+  await database.query('UPDATE users SET external_user = 1 WHERE id = ?', id);
+
+  return findUserById(id);
+}
+
 export {
   getUsers,
   getUserById,
-  findUserByEmail,
+  getUserByEmail,
   findUserById,
   registerUser,
   updateProfile,
   updatePassword,
   updateImage,
   deleteImage,
+  makeExternalUser,
 };
