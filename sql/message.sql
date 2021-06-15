@@ -53,6 +53,7 @@ CREATE TABLE `products_img` (
     `review_text` TEXT(500) DEFAULT NULL,
     `review_date` DATE DEFAULT NULL,
     `user_id` INT NOT NULL,
+    `watched` INT,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
@@ -74,6 +75,7 @@ CREATE TABLE `products_img` (
     `edited_bid_message` INT NOT NULL DEFAULT 0,
     `bid_status` VARCHAR(20) NOT NULL DEFAULT 'ofertado',
     `bid_date` DATE NOT NULL,
+     `watched` INT,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
@@ -159,7 +161,7 @@ CREATE TABLE `contacts`(
 INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega'), ('pc');
 
 INSERT INTO sub_categories (name, category_id) VALUES ('playstation', 1), ('ps vita', 1), ('psp', 1),('playstation 2', 1), ('playstation 3', 1), ('xbox 360', 3), ('xbox one', 3), ('xbox', 3), ('nes', 2), ('game boy', 2), ('game boy color', 2),
- ('game boy advance', 2), ('nintendo switch', 2),('nintendo ds', 2), ('nintendo 3ds', 2), ('wii u', 2), ('wii', 2), ('nintendo dsi', 2) , ('nintendo 64', 2), ('gamecube', 2), ('pc', 6), ('playstation 5', 1), ('playstation 4', 1),('xbox series s/x', 3),
+ ('game boy advance', 2), ('nintendo switch', 2),('nintendo ds', 2), ('nintendo 3ds', 2), ('wii u', 2), ('nintendo dsi', 2) , ('nintendo 64', 2), ('gamecube', 2), ('pc', 6), ('playstation 5', 1), ('playstation 4', 1),('xbox series s/x', 3),
 ('snes', 2), ('commodore / amiga', 6), ('atari 7800', 4), ('atari 5200', 4), ('atari 2600', 4), ('atari flashback', 4), ('atari 8-bit', 4), ('atari st', 4),
 ('atari linx', 4), ('atari xegs', 4), ('genesis', 5), ('sega saturn', 5), ('sega cd', 5), ('sega 32x', 5), ('sega master system', 5),  ('dreamcast', 5),
 ('3do', 1), ('jaguar', 4), ('game gear', 5), ('neo geo', 2);

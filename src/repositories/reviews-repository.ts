@@ -7,12 +7,13 @@ import { findImageById } from './images-repository';
  * @returns JSON con la info de la review
  */
 const getReviewByProductId = async (id) => {
-  const getReviewByProductQuery = 'SELECT * FROM reviews WHERE product_id = ?';
-  const [getReviewbyProductData] = await database.query(
-    getReviewByProductQuery,
-    [id]
-  );
-  return getReviewbyProductData[0];
+    const getReviewByProductQuery =
+        'SELECT * FROM reviews WHERE product_id = ?';
+    const [getReviewbyProductData] = await database.query(
+        getReviewByProductQuery,
+        [id]
+    );
+    return getReviewbyProductData[0];
 };
 
 /**
@@ -22,16 +23,16 @@ const getReviewByProductId = async (id) => {
  * @returns JSON con la info de la review creada
  */
 const addReviewToProduct = async (data, productId, userId) => {
-  const addReviewToProductQuery =
-    'INSERT INTO reviews (product_id, user_id, review_rating, review_text, review_date) VALUES (?, ?, ?, ?, curdate())';
-  await database.query(addReviewToProductQuery, [
-    productId,
-    userId,
-    data.review_rating,
-    data.review_text,
-  ]);
-  const reviewDone = await getReviewByProductId(productId);
-  return reviewDone;
+    const addReviewToProductQuery =
+        'INSERT INTO reviews (product_id, user_id, review_rating, review_text, review_date) VALUES (?, ?, ?, ?, curdate())';
+    await database.query(addReviewToProductQuery, [
+        productId,
+        userId,
+        data.review_rating,
+        data.review_text,
+    ]);
+    const reviewDone = await getReviewByProductId(productId);
+    return reviewDone;
 };
 
 /**
@@ -41,16 +42,16 @@ const addReviewToProduct = async (data, productId, userId) => {
  * @returns JSON con la info de la review actualizada
  */
 const updateReview = async (data, productId) => {
-  //TODO - DEFINE FUNC
-  const updateReviewToProductQuery =
-    'UPDATE reviews SET review_rating = ?, review_text = ? WHERE product_id = ?';
-  await database.query(updateReviewToProductQuery, [
-    data.review_rating,
-    data.review_text,
-    productId,
-  ]);
-  const reviewDone = await getReviewByProductId(productId);
-  return reviewDone;
+    //TODO - DEFINE FUNC
+    const updateReviewToProductQuery =
+        'UPDATE reviews SET review_rating = ?, review_text = ? WHERE product_id = ?';
+    await database.query(updateReviewToProductQuery, [
+        data.review_rating,
+        data.review_text,
+        productId,
+    ]);
+    const reviewDone = await getReviewByProductId(productId);
+    return reviewDone;
 };
 
 /**
@@ -58,8 +59,8 @@ const updateReview = async (data, productId) => {
  * @param {string} productId id del producto objetivo
  */
 const deleteReview = async (productId) => {
-  const deleteReviewQuery = 'DELETE FROM reviews where product_id = ?';
-  await database.query(deleteReviewQuery, [productId]);
+    const deleteReviewQuery = 'DELETE FROM reviews where product_id = ?';
+    await database.query(deleteReviewQuery, [productId]);
 };
 
 /**
@@ -68,41 +69,43 @@ const deleteReview = async (productId) => {
  * @returns {number | string} valoracion media del usuario
  */
 const getAvgReviewScoreByUser = async (userId) => {
-  const queryGetRating =
-    'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, user_id FROM reviews WHERE user_id = ?';
-  const [result] = await database.query(queryGetRating, userId);
-  return result[0];
+    const queryGetRating =
+        'SELECT COUNT(*) as total_review, AVG(review_rating) AS review_average, user_id FROM reviews WHERE user_id = ?';
+    const [result] = await database.query(queryGetRating, userId);
+    return result[0];
 };
 
 const getMadeReviews = async (userId) => {
-  const queryMade =
-    'SELECT products.id AS product_id, products.seller_id , users.username as seller_name, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = products.seller_id WHERE reviews.user_id = ?';
-  const [result]: any = await database.query(queryMade, userId);
-  for (const prod of result) {
-    const images: any = await findImageById(prod.product_id);
-    prod.images = [...images];
-  }
-  return result;
+    const queryMade =
+        'SELECT products.id AS product_id, products.seller_id , users.username as seller_name, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = products.seller_id WHERE reviews.user_id = ?';
+    const [result]: any = await database.query(queryMade, userId);
+    for (const prod of result) {
+        const images: any = await findImageById(prod.product_id);
+        prod.images = [...images];
+    }
+    return result;
 };
 
 const getReceivedReviews = async (userId) => {
-  const queryMade =
-    'SELECT products.id AS product_id, products.seller_id, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id, users.username as reviewer_name FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = reviews.user_id WHERE products.seller_id = ?';
-  const [result]: any = await database.query(queryMade, userId);
+    const queryMade =
+        'SELECT products.id AS product_id, products.seller_id, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria, products.views, reviews.id AS review_id, reviews.review_rating, reviews.review_text, reviews.review_date, reviews.user_id AS reviewer_id, users.username as reviewer_name FROM products INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id INNER JOIN reviews ON reviews.product_id = products.id INNER JOIN users ON users.id = reviews.user_id WHERE products.seller_id = ?';
+    const [result]: any = await database.query(queryMade, userId);
 
-  for (const prod of result) {
-    const images: any = await findImageById(prod.product_id);
-    prod.images = [...images];
-  }
-  return result;
+    for (const prod of result) {
+        const images: any = await findImageById(prod.product_id);
+        prod.images = [...images];
+    }
+    //Reviews han sido vistas
+
+    return result;
 };
 
 export {
-  getReviewByProductId,
-  addReviewToProduct,
-  updateReview,
-  deleteReview,
-  getAvgReviewScoreByUser,
-  getMadeReviews,
-  getReceivedReviews,
+    getReviewByProductId,
+    addReviewToProduct,
+    updateReview,
+    deleteReview,
+    getAvgReviewScoreByUser,
+    getMadeReviews,
+    getReceivedReviews,
 };
