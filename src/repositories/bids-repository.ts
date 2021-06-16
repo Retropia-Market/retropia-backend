@@ -70,7 +70,7 @@ async function modifyBid(bidId, data) {
 
 async function getUserBidsById(userId) {
   try {
-    const query = `SELECT * FROM bids WHERE user_id = '${userId}';`;
+    const query = `SELECT * FROM bids WHERE user_id = '${userId}' AND bid_status = 'ofertado';`;
     const [user_bids] = await database.query(query);
     console.log(user_bids);
     return user_bids;
@@ -81,7 +81,18 @@ async function getUserBidsById(userId) {
 
 async function getUserReceivedBidsBySellerId(userId) {
   try {
-    const query = `SELECT bids.* FROM bids INNER JOIN products ON bids.product_id = products.id WHERE products.seller_id = '${userId}';`;
+    const query = `SELECT bids.* FROM bids INNER JOIN products ON bids.product_id = products.id WHERE products.seller_id = '${userId}' AND sale_status = 'En venta';`;
+    const [user_bids] = await database.query(query);
+    console.log(user_bids);
+    return user_bids;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getUserCompletedBidsByBuyerId(userId) {
+  try {
+    const query = `SELECT * FROM bids INNER JOIN products ON bids.product_id = products.id WHERE sale_status = 'vendido' AND user_id = '${userId}';`;
     const [user_bids] = await database.query(query);
     console.log(user_bids);
     return user_bids;
@@ -135,4 +146,5 @@ export {
   getProductsBidsById,
   acceptBid,
   declineBid,
+  getUserCompletedBidsByBuyerId,
 };

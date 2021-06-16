@@ -207,16 +207,23 @@ app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
 
 // Ver ofertas realizadas por UserId
 app.get(
-  '/products/bid/user/:userId',
+  '/products/bid/user/:userId/made',
   validateAuthorization,
   bidsController.getUserBidsById
 );
 
-// Ver ofertas recibidas por UserId
+// Ver ofertas recibidas por SellerId
 app.get(
   '/products/bid/user/:userId/received',
   validateAuthorization,
   bidsController.getUserReceivedBidsBySellerId
+);
+
+// Ver ofertas completadas por BuyerId
+app.get(
+  '/products/bid/user/:userId/completed',
+  validateAuthorization,
+  bidsController.getUserCompletedBidsByBuyerId
 );
 
 // Ver ofertas recibidas por ProductId

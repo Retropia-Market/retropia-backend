@@ -220,6 +220,19 @@ const getUserReceivedBidsBySellerId: RequestHandler = async (
     next(error);
   }
 };
+const getUserCompletedBidsByBuyerId: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { userId } = req.params;
+    const bids = await bidsRepository.getUserCompletedBidsByBuyerId(userId);
+    res.send({ bids });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getProductsBidsById: RequestHandler = async (req, res, next) => {
   try {
@@ -240,4 +253,5 @@ export {
   getUserBidsById,
   getProductsBidsById,
   getUserReceivedBidsBySellerId,
+  getUserCompletedBidsByBuyerId,
 };
