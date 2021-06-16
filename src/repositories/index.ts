@@ -6,14 +6,15 @@ import * as bidsRepository from './bids-repository';
 import * as favouritesRepository from './favourites-repository';
 import * as categoriesRepository from './categories-repository';
 import * as chatRepository from './chat-repository';
+import * as notificationRepository from './notification-repository';
 
 export {
-  usersRepository,
-  productsRepository,
-  imagesRepository,
-  reviewsRepository,
-  bidsRepository,
-  favouritesRepository,
-  categoriesRepository,
-  chatRepository,
+    usersRepository,
+    productsRepository,
+    imagesRepository,
+    reviewsRepository,
+    bidsRepository,
+    favouritesRepository,
+    categoriesRepository,
+    chatRepository,
 };
