@@ -4,20 +4,21 @@ import express from 'express';
 import path from 'path';
 
 import {
-  usersController,
-  productsController,
-  reviewsController,
-  bidsController,
-  favouritesController,
-  categoriesController,
-  gamesApiController,
-  chatController,
+    usersController,
+    productsController,
+    reviewsController,
+    bidsController,
+    favouritesController,
+    categoriesController,
+    gamesApiController,
+    chatController,
+    notificationController,
 } from './controllers';
 
 import {
-  validateAuthorization,
-  uploadProductImage,
-  uploadUserImg,
+    validateAuthorization,
+    uploadProductImage,
+    uploadUserImg,
 } from './middlewares';
 const staticPath = path.resolve(__dirname, 'static');
 
@@ -46,60 +47,60 @@ app.get('/users/:id', usersController.getUserById);
 
 // Editar información
 app.patch(
-  '/users/:id/update-profile',
-  validateAuthorization,
-  usersController.updateProfile
+    '/users/:id/update-profile',
+    validateAuthorization,
+    usersController.updateProfile
 );
 
 // Actualizar password
 app.patch(
-  '/users/:id/update-password',
-  validateAuthorization,
-  usersController.updatePassword
+    '/users/:id/update-password',
+    validateAuthorization,
+    usersController.updatePassword
 );
 
 // Actualizar imagen de usuario
 app.post(
-  '/users/:id/update-img',
-  validateAuthorization,
-  uploadUserImg.single('userImg'),
-  usersController.updateImage
+    '/users/:id/update-img',
+    validateAuthorization,
+    uploadUserImg.single('userImg'),
+    usersController.updateImage
 );
 // Borrar imagen de usuario
 app.delete(
-  '/users/:id/delete-img',
-  validateAuthorization,
-  usersController.deleteImage
+    '/users/:id/delete-img',
+    validateAuthorization,
+    usersController.deleteImage
 );
 
 // FAVORITOS ****************************************************************************************************************
 
 // Add favourite
 app.post(
-  '/:productId/addFavourite/:userId',
-  validateAuthorization,
-  favouritesController.addFavourite
+    '/:productId/addFavourite/:userId',
+    validateAuthorization,
+    favouritesController.addFavourite
 );
 
 // Remove favourite
 app.delete(
-  '/:productId/removeFavourite/:userId',
-  validateAuthorization,
-  favouritesController.removeFavourite
+    '/:productId/removeFavourite/:userId',
+    validateAuthorization,
+    favouritesController.removeFavourite
 );
 
 // Get all user favourites
 app.get(
-  '/:userId/getFavourites/',
-  validateAuthorization,
-  favouritesController.getUserFavourites
+    '/:userId/getFavourites/',
+    validateAuthorization,
+    favouritesController.getUserFavourites
 );
 
 // Get user favourite by favourite_id
 app.get(
-  '/:userId/getFavourites/:favouriteId',
-  validateAuthorization,
-  favouritesController.getFavouriteById
+    '/:userId/getFavourites/:favouriteId',
+    validateAuthorization,
+    favouritesController.getFavouriteById
 );
 
 // CATALOGO ***************************************************************************************************************
@@ -122,46 +123,46 @@ app.get('/top', productsController.getTopProducts);
 //Obtener productos relacionados con el producto que se esta viendo.
 
 app.get(
-  '/catalogue/seemore/:subcategory',
-  productsController.getSimilarProducts
+    '/catalogue/seemore/:subcategory',
+    productsController.getSimilarProducts
 );
 
 //Vender Producto
 app.post(
-  '/catalogue/sell',
-  validateAuthorization,
-  uploadProductImage.array('images'),
-  productsController.addProductToSellList
+    '/catalogue/sell',
+    validateAuthorization,
+    uploadProductImage.array('images'),
+    productsController.addProductToSellList
 );
 //Borrar Producto
 app.delete(
-  '/catalogue/:id/product-delete',
-  validateAuthorization,
-  productsController.removeProductbyId
+    '/catalogue/:id/product-delete',
+    validateAuthorization,
+    productsController.removeProductbyId
 );
 
 //Actualizar Producto por ID ()
 app.patch(
-  '/catalogue/:id/update',
-  validateAuthorization,
-  productsController.updateProduct
+    '/catalogue/:id/update',
+    validateAuthorization,
+    productsController.updateProduct
 );
 
 //Actualizar estado de venta de producto(en venta o vendido)
 
 app.patch(
-  '/catalogue/:id/sale',
-  validateAuthorization,
-  productsController.updateSaleStatus
+    '/catalogue/:id/sale',
+    validateAuthorization,
+    productsController.updateSaleStatus
 );
 
 //Añadir mas imagenes al producto
 
 app.post(
-  '/catalogue/:id/images',
-  validateAuthorization,
-  uploadProductImage.array('images'),
-  productsController.addMoreImagesToProduct
+    '/catalogue/:id/images',
+    validateAuthorization,
+    uploadProductImage.array('images'),
+    productsController.addMoreImagesToProduct
 );
 
 // REVIEWS ****************************************************************************************************************
@@ -169,33 +170,33 @@ app.post(
 app.get('/catalogue/:id/review', reviewsController.getReviewByProductId);
 
 app.post(
-  '/catalogue/:id/review/create',
-  validateAuthorization,
-  reviewsController.addReviewToProduct
+    '/catalogue/:id/review/create',
+    validateAuthorization,
+    reviewsController.addReviewToProduct
 );
 
 app.patch(
-  '/catalogue/:id/review/update',
-  validateAuthorization,
-  reviewsController.updateReview
+    '/catalogue/:id/review/update',
+    validateAuthorization,
+    reviewsController.updateReview
 );
 
 app.delete(
-  '/catalogue/:id/review/delete',
-  validateAuthorization,
-  reviewsController.deleteReview
+    '/catalogue/:id/review/delete',
+    validateAuthorization,
+    reviewsController.deleteReview
 );
 
 app.get(
-  '/users/:userId/review/reviews-made',
-  validateAuthorization,
-  reviewsController.getMadeReviews
+    '/users/:userId/review/reviews-made',
+    validateAuthorization,
+    reviewsController.getMadeReviews
 );
 
 app.get(
-  '/users/:userId/review/reviews-received',
-  validateAuthorization,
-  reviewsController.getReceivedReviews
+    '/users/:userId/review/reviews-received',
+    validateAuthorization,
+    reviewsController.getReceivedReviews
 );
 
 app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
@@ -204,16 +205,16 @@ app.get('/user/:id/rating', reviewsController.getAvgReviewScoreByUser);
 
 // Ver ofertas realizadas por UserId
 app.get(
-  '/products/bid/user/:userId',
-  validateAuthorization,
-  bidsController.getUserBidsById
+    '/products/bid/user/:userId',
+    validateAuthorization,
+    bidsController.getUserBidsById
 );
 
 // Ver ofertas recibidas por UserId
 app.get(
-  '/products/bid/user/:userId/received',
-  validateAuthorization,
-  bidsController.getUserReceivedBidsBySellerId
+    '/products/bid/user/:userId/received',
+    validateAuthorization,
+    bidsController.getUserReceivedBidsBySellerId
 );
 
 // Ver ofertas recibidas por ProductId
@@ -221,37 +222,37 @@ app.get('/products/:productId/bid', bidsController.getProductsBidsById);
 
 // Hacer Oferta
 app.post(
-  '/products/:productId/bid',
-  validateAuthorization,
-  bidsController.placeBid
+    '/products/:productId/bid',
+    validateAuthorization,
+    bidsController.placeBid
 );
 
 // Aceptar Oferta by ID
 app.patch(
-  '/products/bid/:bidId/accept',
-  validateAuthorization,
-  bidsController.acceptBid
+    '/products/bid/:bidId/accept',
+    validateAuthorization,
+    bidsController.acceptBid
 );
 
 // Rechazar Oferta by ID
 app.patch(
-  '/products/bid/:bidId/decline',
-  validateAuthorization,
-  bidsController.declineBid
+    '/products/bid/:bidId/decline',
+    validateAuthorization,
+    bidsController.declineBid
 );
 
 // Eliminar Oferta
 app.delete(
-  '/products/bid/:bidId/delete',
-  validateAuthorization,
-  bidsController.deleteBidById
+    '/products/bid/:bidId/delete',
+    validateAuthorization,
+    bidsController.deleteBidById
 );
 
 //Modifica Oferta
 app.patch(
-  '/products/bid/:bidId/modify',
-  validateAuthorization,
-  bidsController.modifyBidById
+    '/products/bid/:bidId/modify',
+    validateAuthorization,
+    bidsController.modifyBidById
 );
 
 // CATEGORIES *********************************************************************************************************
@@ -264,33 +265,53 @@ app.get('/categories/', categoriesController.getCategories);
 //Get contacts with lastMessage
 
 app.get(
-  '/chats/:userId/get-contacts',
-  validateAuthorization,
-  chatController.getContactList
+    '/chats/:userId/get-contacts',
+    validateAuthorization,
+    chatController.getContactList
 );
 
 // Get messages between two users
 
 app.get(
-  '/chats/:srcId/get-messages/:dstId',
-  validateAuthorization,
-  chatController.getMessages
+    '/chats/:srcId/get-messages/:dstId',
+    validateAuthorization,
+    chatController.getMessages
 );
 
 // Add user to contacts
 
 app.post(
-  '/chats/:srcId/add-contact/:dstId',
-  validateAuthorization,
-  chatController.addContact
+    '/chats/:srcId/add-contact/:dstId',
+    validateAuthorization,
+    chatController.addContact
 );
 
 // Send message to user
 
 app.post(
-  '/chats/:srcId/send-message/:dstId/',
-  validateAuthorization,
-  chatController.addMessage
+    '/chats/:srcId/send-message/:dstId/',
+    validateAuthorization,
+    chatController.addMessage
+);
+
+//Notifications
+
+app.get(
+    '/api/notifications/bids',
+    validateAuthorization,
+    notificationController.getBidsNotifications
+);
+
+app.get(
+    '/api/notifications/reviews',
+    validateAuthorization,
+    notificationController.getReviewsNotifications
+);
+
+app.get(
+    '/api/notifications/messages',
+    validateAuthorization,
+    notificationController.getMessagesNotifications
 );
 
 //EXTERNAL APIS
@@ -301,21 +322,19 @@ app.get('/rawg/platform/', gamesApiController.getRawgConsoleInfo);
 
 app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
 
-//TODO - Finish vision
-
 app.post(
-  '/sell/vision/',
-  validateAuthorization,
-  uploadProductImage.single('image'),
-  gamesApiController.getGoogleVision
+    '/sell/vision/',
+    validateAuthorization,
+    uploadProductImage.single('image'),
+    gamesApiController.getGoogleVision
 );
 
 // ERROR HANDLER *********************************************************************************************************
 
 app.use(async (err, req, res, next) => {
-  const status = err.isJoi ? 400 : err.code || 500;
-  res.status(status);
-  res.send({ resultado: 'ERROR', error: err.message });
+    const status = err.isJoi ? 400 : err.code || 500;
+    res.status(status);
+    res.send({ resultado: 'ERROR', error: err.message });
 });
 
 module.exports = { app };

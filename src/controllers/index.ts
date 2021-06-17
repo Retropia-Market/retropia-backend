@@ -6,14 +6,16 @@ import * as favouritesController from './favourites-controller';
 import * as categoriesController from './categories-controller';
 import * as gamesApiController from './gamesapi-controller';
 import * as chatController from './chat-controller';
+import * as notificationController from './notifications-controllers';
 
 export {
-  usersController,
-  productsController,
-  reviewsController,
-  bidsController,
-  favouritesController,
-  categoriesController,
-  gamesApiController,
-  chatController,
+    usersController,
+    productsController,
+    reviewsController,
+    bidsController,
+    favouritesController,
+    categoriesController,
+    gamesApiController,
+    chatController,
+    notificationController,
 };
