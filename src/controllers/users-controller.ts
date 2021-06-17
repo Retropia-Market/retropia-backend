@@ -1,13 +1,15 @@
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { OAuth2Client } from 'google-auth-library';
 
-import { RequestHandler } from 'express';
+import { isCorrectUser } from '../middlewares';
+import { usersRepository } from '../repositories';
 
-const { isCorrectUser } = require('../middlewares');
-const { usersRepository } = require('../repositories');
+import { RequestHandler } from 'express';
 import { ErrnoException } from '../models/Error';
+import { CustomReq } from './mail-controller';
 
 const getUsers: RequestHandler = async (req, res, next) => {
   try {
@@ -30,7 +32,7 @@ const getUserById: RequestHandler = async (req, res, next) => {
   }
 };
 
-const registerUser: RequestHandler = async (req, res, next) => {
+const registerUser: RequestHandler = async (req: any, res, next) => {
   try {
     const data = req.body;
 
@@ -39,7 +41,6 @@ const registerUser: RequestHandler = async (req, res, next) => {
       password: Joi.string().min(8).max(20).alphanum().required(),
       repeatedPassword: Joi.string().min(8).max(20).alphanum().required(),
       email: Joi.string().email().required(),
-      birthDate: Joi.string().required(),
       firstName: Joi.string().required(),
       lastName: Joi.string().required(),
     });
@@ -67,31 +68,82 @@ const registerUser: RequestHandler = async (req, res, next) => {
 
     // hasheo de la password
     data.password = await bcrypt.hash(data.password, 10);
+    data.email_code = crypto.randomBytes(64).toString('hex');
 
     const createdUser = await usersRepository.registerUser(data);
 
-    const tokenPayload = { id: createdUser.id };
+    req.user = createdUser;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const emailVerification: RequestHandler = async (req, res, next) => {
+  try {
+    const { email_code } = req.params;
+
+    let verifiedUser = await usersRepository.emailVerification(email_code);
+
+    if (!verifiedUser) {
+      const err: ErrnoException = new Error('No user found');
+      err.code = 404;
+      throw err;
+    }
+
+    if (verifiedUser.verified) {
+      const err: ErrnoException = new Error('Este usuario ya esta verificado');
+      err.code = 403;
+      throw err;
+    }
+
+    verifiedUser = await usersRepository.validateUser(verifiedUser.id);
+
+    const tokenPayload = { id: verifiedUser.id };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
       expiresIn: '30d',
     });
 
-    res.status(201);
     res.send({
       userData: {
-        id: createdUser.id,
-        username: createdUser.username,
-        email: createdUser.email,
-        firstName: createdUser.firstname,
-        lastName: createdUser.lastname,
-        location: createdUser.location,
-        bio: createdUser.bio,
-        image: createdUser.image,
-        phoneNumber: createdUser.phone_number,
-        birthDate: createdUser.birth_date,
-        externalUser: createdUser.external_user,
+        id: verifiedUser.id,
+        username: verifiedUser.username,
+        email: verifiedUser.email,
+        firstName: verifiedUser.firstname,
+        lastName: verifiedUser.lastname,
+        location: verifiedUser.location,
+        bio: verifiedUser.bio,
+        image: verifiedUser.image,
+        phoneNumber: verifiedUser.phone_number,
+        birthDate: verifiedUser.birth_date,
+        verified: verifiedUser.verified,
+        externalUser: verifiedUser.external_user,
       },
       token,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const passwordRecoveryRequest: RequestHandler = async (
+  req: CustomReq,
+  res,
+  next
+) => {
+  try {
+    const { email } = req.body;
+    const user = await usersRepository.getUserByEmail(email);
+
+    if (!user) {
+      const err: ErrnoException = new Error(
+        'No se ha encontrado usuario con ese correo'
+      );
+      err.code = 404;
+      throw err;
+    }
+
+    req.user = user;
   } catch (error) {
     next(error);
   }
@@ -143,6 +195,7 @@ const userLogin: RequestHandler = async (req, res, next) => {
         image: loggedUser.image,
         phoneNumber: loggedUser.phone_number,
         birthDate: loggedUser.birth_date,
+        verified: loggedUser.verified,
         externalUser: loggedUser.external_user,
       },
       token,
@@ -166,15 +219,10 @@ const userGoogleLogin: RequestHandler = async (req, res, next) => {
 
     const user = await usersRepository.getUserByEmail(email);
     if (user) {
-      // const userData = {
-      //   username: name.replace(/\s+/g, ''),
-      //   firstname: given_name,
-      //   lastname: family_name,
-      // };
-      // await usersRepository.updateProfile(userData, user.id);
-      // await usersRepository.updateImage(user.id, picture);
+      if (!user.vierified) {
+        await usersRepository.validateUser(user.id);
+      }
       loggedUser = await usersRepository.getUserById(user.id);
-      console.log(loggedUser);
     } else {
       const userData = {
         //TODO: hacer username unico uuid
@@ -187,6 +235,8 @@ const userGoogleLogin: RequestHandler = async (req, res, next) => {
       userData.password = await bcrypt.hash(userData.password, 10);
       let newUser = await usersRepository.registerUser(userData);
       newUser = await usersRepository.makeExternalUser(newUser.id);
+      newUser = await usersRepository.validateUser(newUser.id);
+      // newUser = await usersRepository.validateUser(newUser.id)
       loggedUser = await usersRepository.updateImage(newUser.id, picture);
     }
 
@@ -207,6 +257,7 @@ const userGoogleLogin: RequestHandler = async (req, res, next) => {
         image: loggedUser.image,
         phoneNumber: loggedUser.phone_number,
         birthDate: loggedUser.birth_date,
+        verified: loggedUser.verified,
         externalUser: loggedUser.external_user,
       },
       token,
@@ -255,6 +306,7 @@ const updateProfile: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      verified: user.verified,
       externalUser: user.external_user,
     });
   } catch (error) {
@@ -335,6 +387,7 @@ const updateImage: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      verified: user.verified,
       externalUser: user.external_user,
     });
   } catch (error) {
@@ -362,6 +415,7 @@ const deleteImage: RequestHandler = async (req: any, res, next) => {
       image: user.image,
       phoneNumber: user.phone_number,
       birthDate: user.birth_date,
+      verified: user.verified,
       externalUser: user.external_user,
     });
   } catch (error) {
@@ -373,6 +427,8 @@ export {
   getUsers,
   getUserById,
   registerUser,
+  emailVerification,
+  passwordRecoveryRequest,
   userLogin,
   userGoogleLogin,
   updateProfile,

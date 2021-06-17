@@ -1,7 +1,7 @@
 require('dotenv').config();
 import * as http from 'http';
-
 import * as ws from './src/ws';
+
 const { app } = require('./src/app');
 const { PORT } = process.env;
 

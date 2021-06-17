@@ -65,18 +65,36 @@ async function findUserById(id) {
 
 async function registerUser(data) {
   const query =
-    'INSERT INTO users (username, password, email, firstname, lastname) VALUES (?,?,?,?,?)';
+    'INSERT INTO users (username, password, email, firstname, lastname, email_code) VALUES (?,?,?,?,?,?)';
   await database.query(query, [
     data.username,
     data.password,
     data.email,
-    // data?.birthDate,
     data.firstName,
     data.lastName,
+    data.email_code,
   ]);
 
   return getUserByEmail(data.email);
 }
+
+const emailVerification = async (email_code) => {
+  const [results] = await database.query(
+    'SELECT * FROM users WHERE email_code = ?',
+    email_code
+  );
+
+  return results[0];
+};
+
+const validateUser = async (id) => {
+  const [results] = await database.query(
+    'UPDATE users SET verified = 1 WHERE id = ?',
+    id
+  );
+
+  return findUserById(id);
+};
 
 /**############################################################################
  *
@@ -174,6 +192,8 @@ export {
   getUserByEmail,
   findUserById,
   registerUser,
+  emailVerification,
+  validateUser,
   updateProfile,
   updatePassword,
   updateImage,
