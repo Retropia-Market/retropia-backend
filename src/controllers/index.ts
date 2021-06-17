@@ -6,6 +6,7 @@ import * as favouritesController from './favourites-controller';
 import * as categoriesController from './categories-controller';
 import * as gamesApiController from './gamesapi-controller';
 import * as chatController from './chat-controller';
+import * as mailController from './mail-controller';
 
 export {
   usersController,
@@ -16,4 +17,5 @@ export {
   categoriesController,
   gamesApiController,
   chatController,
+  mailController,
 };

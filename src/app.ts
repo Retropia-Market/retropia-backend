@@ -12,6 +12,7 @@ import {
   categoriesController,
   gamesApiController,
   chatController,
+  mailController,
 } from './controllers';
 
 import {
@@ -36,13 +37,27 @@ app.get('/users', usersController.getUsers);
 // USUARIOS ****************************************************************************************************************
 
 // Registro
-app.post('/users/register', usersController.registerUser);
+app.post(
+  '/users/register',
+  usersController.registerUser,
+  mailController.accountVerification
+);
+
+// Verificacion de email
+app.get('/verify-email/:email_code', usersController.emailVerification);
 
 // Login
 app.post('/users/login', usersController.userLogin);
 
 // Google Login
 app.post('/users/login-google', usersController.userGoogleLogin);
+
+// Password Recovery Request
+app.post(
+  '/users/password-recovery',
+  usersController.passwordRecoveryRequest,
+  mailController.passwordRecovery
+);
 
 // Obtener info de usuario
 app.get('/users/:id', usersController.getUserById);
