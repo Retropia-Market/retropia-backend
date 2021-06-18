@@ -9,7 +9,7 @@ import { usersRepository } from '../repositories';
 
 import { RequestHandler } from 'express';
 import { ErrnoException } from '../models/Error';
-import { CustomReq } from './mail-controller';
+import { CustomReq } from '../models/req-handlers';
 
 const getUsers: RequestHandler = async (req, res, next) => {
   try {
