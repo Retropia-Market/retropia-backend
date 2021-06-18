@@ -227,8 +227,18 @@ const updateSubcategory = async (data, id) => {
  */
 
 const getTopProducts = async () => {
-    const getTopProducts =
-        'SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id ORDER BY views DESC LIMIT ?';
+    const getTopProducts = `SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id  WHERE products.sale_status = 'en venta' ORDER BY views DESC LIMIT ?`;
+    const [data]: any = await database.query(getTopProducts, 4);
+    for (const prod of data) {
+        const images: any = await findImageById(prod.id);
+        prod.images = [...images];
+    }
+
+    return data;
+};
+
+const getNewProducts = async () => {
+    const getTopProducts = `SELECT products.id, products.seller_id, users.firstname AS seller, products.name, products.status, products.product_type, products.price, products.sale_status, products.location, products.description, sub_categories.name AS Subcategoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON products.seller_id = users.id  WHERE products.sale_status = 'en venta' ORDER BY id DESC LIMIT ?`;
     const [data]: any = await database.query(getTopProducts, 4);
     for (const prod of data) {
         const images: any = await findImageById(prod.id);
@@ -239,8 +249,7 @@ const getTopProducts = async () => {
 };
 
 const getSimilarProducts = async (subCatName) => {
-    const getRelatedProducts =
-        'SELECT products.id, products.seller_id, products.name , users.username as seller, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON users.id = products.seller_id WHERE sub_categories.name = ? ORDER BY RAND() LIMIT 4';
+    const getRelatedProducts = `SELECT products.id, products.seller_id, products.name , users.username as seller, products.status, products.price, products.sale_status, products.location, products.description, sub_categories.name AS categoria  FROM products  INNER JOIN products_has_subcategory ON products.id = products_has_subcategory.product_id INNER JOIN sub_categories ON products_has_subcategory.subcategory_id = sub_categories.id  INNER JOIN categories ON sub_categories.category_id = categories.id INNER JOIN users ON users.id = products.seller_id WHERE sub_categories.name = ? AND products.sale_status = 'en venta' ORDER BY RAND() LIMIT 4`;
     const [data]: any = await database.query(getRelatedProducts, subCatName);
     for (const prod of data) {
         const images: any = await findImageById(prod.id);
@@ -276,4 +285,5 @@ export {
     getSingleProduct,
     getBidByProdAndUser,
     getSimilarProducts,
+    getNewProducts,
 };

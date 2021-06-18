@@ -261,6 +261,15 @@ const getTopProducts: RequestHandler = async (req, res, next) => {
     }
 };
 
+const getNewProducts: RequestHandler = async (req, res, next) => {
+    try {
+        const data = await productsRepository.getNewProducts();
+        res.send(data);
+    } catch (error) {
+        next(error);
+    }
+};
+
 const getSimilarProducts: RequestHandler = async (req, res, next) => {
     try {
         const { subcategory } = req.params;
@@ -287,4 +296,5 @@ export {
     getCatalogueByUserId,
     getTopProducts,
     getSimilarProducts,
+    getNewProducts,
 };
