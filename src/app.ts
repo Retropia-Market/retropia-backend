@@ -59,6 +59,9 @@ app.post(
   mailController.passwordRecovery
 );
 
+// Password Recovery
+app.post('/users/password-reset/:token', usersController.passwordRecovery);
+
 // Obtener info de usuario
 app.get('/users/:id', usersController.getUserById);
 

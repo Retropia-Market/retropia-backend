@@ -143,7 +143,49 @@ const passwordRecoveryRequest: RequestHandler = async (
       throw err;
     }
 
+    const tokenPayload = { id: user.id };
+    const passwordToken = jwt.sign(tokenPayload, process.env.JWT_SECRET, {
+      expiresIn: 60 * 10,
+    });
+
+    await usersRepository.generatePassToken(user.id, passwordToken);
+
     req.user = user;
+    req.passwordToken = passwordToken;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const passwordRecovery: RequestHandler = async (req, res, next) => {
+  try {
+    const { newPassword, newRepPassword } = req.body;
+    const { token } = req.params;
+
+    if (newPassword !== newRepPassword) {
+      const err: ErrnoException = new Error(
+        'Las contraseñas deben ser iguales'
+      );
+      err.code = 400;
+      throw err;
+    }
+
+    const user = await usersRepository.getUserByPassCode(token);
+    if (!user) {
+      const err: ErrnoException = new Error('Usuario no encontrado');
+      err.code = 404;
+      throw err;
+    }
+
+    const hashedPass = await bcrypt.hash(newPassword, 10);
+    await usersRepository.updatePassword(hashedPass, user.id);
+
+    res.status(201);
+    res.send({
+      status: 'OK',
+      message: 'password has been successfully reset',
+    });
   } catch (error) {
     next(error);
   }
@@ -429,6 +471,7 @@ export {
   registerUser,
   emailVerification,
   passwordRecoveryRequest,
+  passwordRecovery,
   userLogin,
   userGoogleLogin,
   updateProfile,

@@ -6,6 +6,7 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 export interface CustomReq extends Request {
   user: UserEntity;
+  passwordToken?: string;
 }
 
 const accountVerification: RequestHandler = async (
@@ -46,13 +47,14 @@ const accountVerification: RequestHandler = async (
 
 const passwordRecovery: RequestHandler = async (req: CustomReq, res, next) => {
   try {
-    const { email } = req.body;
+    const { email } = req.user;
+    const { passwordToken } = req;
     const msg = {
       to: email,
       from: 'retropiamarket@gmail.com',
       subject: 'Retropia Market - password recovery',
       text: `Please copy and paste the following link into your browser address bar to recover your password:
-        link
+        http://${process.env.CLIENT_URL}/reset-password/${passwordToken}
       `,
       html: `
         <html> 
@@ -60,7 +62,7 @@ const passwordRecovery: RequestHandler = async (req: CustomReq, res, next) => {
             <h1>Password Recovery</h1>
             <p>If you have not requested a password recovery, please disregard this message</p>
             <p>Please clink on the link below to recover your password:</p>
-            <a href="http://${req.headers.host}/password-recovery
+            <a href="http://${process.env.CLIENT_URL}/reset-password/${passwordToken}">Reset your password</a>
           </body>
         </html>
       `,

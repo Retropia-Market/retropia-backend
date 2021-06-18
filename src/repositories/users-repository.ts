@@ -42,6 +42,15 @@ async function getUserByEmail(email) {
   return users[0];
 }
 
+async function getUserByPassCode(code) {
+  const [results] = await database.query(
+    'SELECT * FROM users WHERE password_token = ?',
+    code
+  );
+
+  return results[0];
+}
+
 /**############################################################################
  *
  * Funcion para obtener usuario por id de usuario
@@ -94,6 +103,15 @@ const validateUser = async (id) => {
   );
 
   return findUserById(id);
+};
+
+const generatePassToken = async (id, token) => {
+  await database.query('UPDATE users SET password_token = ? WHERE id = ?', [
+    token,
+    id,
+  ]);
+
+  return getUserById(id);
 };
 
 /**############################################################################
@@ -190,10 +208,12 @@ export {
   getUsers,
   getUserById,
   getUserByEmail,
+  getUserByPassCode,
   findUserById,
   registerUser,
   emailVerification,
   validateUser,
+  generatePassToken,
   updateProfile,
   updatePassword,
   updateImage,

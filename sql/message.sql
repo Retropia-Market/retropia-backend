@@ -14,7 +14,9 @@ CREATE TABLE `users` (
     `image` VARCHAR(100) DEFAULT NULL,
     `phone_number` VARCHAR(20) DEFAULT NULL,
     `birth_date` DATE DEFAULT NULL,
-    'status' INT NOT NULL DEFAULT 0,
+    `verified` INT DEFAULT 0,
+    `email_code` VARCHAR(400) DEFAULT NULL,
+    `password_token` VARCHAR(400) DEFAULT NULL,
     'external_user' INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
