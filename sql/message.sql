@@ -14,6 +14,9 @@ CREATE TABLE `users` (
     `image` VARCHAR(100) DEFAULT NULL,
     `phone_number` VARCHAR(20) DEFAULT NULL,
     `birth_date` DATE DEFAULT NULL,
+    `verified` INT DEFAULT 0,
+    `email_code` VARCHAR(400) DEFAULT NULL,
+    `external_user` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
 
@@ -53,7 +56,7 @@ CREATE TABLE `products_img` (
     `review_text` TEXT(500) DEFAULT NULL,
     `review_date` DATE DEFAULT NULL,
     `user_id` INT NOT NULL,
-    `watched` INT,
+    `watched` INT DEFAULT 0,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
@@ -75,7 +78,7 @@ CREATE TABLE `products_img` (
     `edited_bid_message` INT NOT NULL DEFAULT 0,
     `bid_status` VARCHAR(20) NOT NULL DEFAULT 'ofertado',
     `bid_date` DATE NOT NULL,
-     `watched` INT,
+	 `watched` INT DEFAULT 0,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
