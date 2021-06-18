@@ -159,4 +159,5 @@ export {
     getProductsBidsById,
     acceptBid,
     declineBid,
+    getUserCompletedBidsByBuyerId,
 };
