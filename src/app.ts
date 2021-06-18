@@ -119,6 +119,8 @@ app.get('/users/:id/catalogue', productsController.getCatalogueByUserId);
 
 //Obtener los productos mas visitados
 app.get('/top', productsController.getTopProducts);
+//Obtener los productos mas visitados
+app.get('/new', productsController.getNewProducts);
 
 //Obtener productos relacionados con el producto que se esta viendo.
 

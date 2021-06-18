@@ -13,7 +13,7 @@ const getReviewsNotifications = async (userId) => {
 };
 
 const getMessagesNotifications = async (userId) => {
-    const query = `SELECT users.id as user_id , users.username, message.status as message_notifications from users  JOIN message ON message.dst_id = users.id WHERE users.id = ?;`;
+    const query = `SELECT users.id as user_id , users.username, message.status as message_notifications from users  JOIN message ON message.src_id = users.id WHERE message.dst_id = ? AND message.status = 0;`;
     const [user_messages] = await database.query(query, userId);
     return user_messages;
 };
