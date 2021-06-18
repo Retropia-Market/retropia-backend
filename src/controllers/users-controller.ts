@@ -160,10 +160,27 @@ const passwordRecoveryRequest: RequestHandler = async (
 
 const passwordRecovery: RequestHandler = async (req, res, next) => {
   try {
-    const { newPassword, newRepPassword } = req.body;
+    const { password, repeatedPassword } = req.body;
     const { token } = req.params;
 
-    if (newPassword !== newRepPassword) {
+    const user = await usersRepository.getUserByPassCode(token);
+
+    if (!user) {
+      const err: ErrnoException = new Error('Usuario no encontrado');
+      err.code = 404;
+      throw err;
+    }
+
+    const schema = Joi.object({
+      password: Joi.string().min(8).max(20).alphanum().required(),
+      repeatedPassword: Joi.string().min(8).max(20).alphanum().required(),
+      token: Joi.string().required(),
+    });
+
+    await schema.validateAsync(req.body);
+    await jwt.verify(token, process.env.JWT_SECRET);
+
+    if (password !== repeatedPassword) {
       const err: ErrnoException = new Error(
         'Las contraseñas deben ser iguales'
       );
@@ -171,15 +188,17 @@ const passwordRecovery: RequestHandler = async (req, res, next) => {
       throw err;
     }
 
-    const user = await usersRepository.getUserByPassCode(token);
-    if (!user) {
-      const err: ErrnoException = new Error('Usuario no encontrado');
-      err.code = 404;
+    if (await bcrypt.compare(password, user.password)) {
+      const err: ErrnoException = new Error(
+        'no puedes usar la contraseña antigua'
+      );
+      err.code = 403;
       throw err;
     }
 
-    const hashedPass = await bcrypt.hash(newPassword, 10);
+    const hashedPass = await bcrypt.hash(password, 10);
     await usersRepository.updatePassword(hashedPass, user.id);
+    await usersRepository.revokePassToken(user.id);
 
     res.status(201);
     res.send({

@@ -54,7 +54,7 @@ const passwordRecovery: RequestHandler = async (req: CustomReq, res, next) => {
       from: 'retropiamarket@gmail.com',
       subject: 'Retropia Market - password recovery',
       text: `Please copy and paste the following link into your browser address bar to recover your password:
-        http://${process.env.CLIENT_URL}/reset-password/${passwordToken}
+        ${process.env.CLIENT_URL}/reset-password/${passwordToken}
       `,
       html: `
         <html> 
@@ -62,7 +62,7 @@ const passwordRecovery: RequestHandler = async (req: CustomReq, res, next) => {
             <h1>Password Recovery</h1>
             <p>If you have not requested a password recovery, please disregard this message</p>
             <p>Please clink on the link below to recover your password:</p>
-            <a href="http://${process.env.CLIENT_URL}/reset-password/${passwordToken}">Reset your password</a>
+            <a href="${process.env.CLIENT_URL}/reset-password/${passwordToken}">Reset your password</a>
           </body>
         </html>
       `,
