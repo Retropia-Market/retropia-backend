@@ -18,8 +18,15 @@ const getMessagesNotifications = async (userId) => {
     return user_messages;
 };
 
+const getSalesNotifications = async (userId) => {
+    const query = `SELECT bids.* , bids.watched_after_accepted as sale_notification, users.username as username from users JOIN bids ON bids.user_id = users.id WHERE bids.user_id = ? AND bids.watched_after_accepted = 0 AND bids.bid_status = 'aceptado';`;
+    const [user_messages] = await database.query(query, userId);
+    return user_messages;
+};
+
 export {
     getBidsNotifications,
     getMessagesNotifications,
     getReviewsNotifications,
+    getSalesNotifications,
 };

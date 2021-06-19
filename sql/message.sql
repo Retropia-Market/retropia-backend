@@ -80,6 +80,7 @@ CREATE TABLE `products_img` (
     `bid_status` VARCHAR(20) NOT NULL DEFAULT 'ofertado',
     `bid_date` DATE NOT NULL,
 	 `watched` INT DEFAULT 0,
+       `watched_after_accepted` INT DEFAULT 0,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
