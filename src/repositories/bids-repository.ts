@@ -1,5 +1,4 @@
 import { format } from 'date-fns';
-import { bidResponse } from 'src/models/db-responses';
 
 import { database } from '../infrastructure';
 
@@ -108,8 +107,24 @@ async function getUserReceivedBidsBySellerId(userId) {
 async function getUserCompletedBidsByBuyerId(userId) {
     try {
         const query = `SELECT * FROM bids INNER JOIN products ON bids.product_id = products.id WHERE sale_status = 'vendido' AND user_id = '${userId}';`;
-        const [user_bids] = await database.query(query);
-        const updateSeenStatus = ``;
+        const [user_bids]: Array<any> = await database.query(query);
+
+        //Compras han sido vista
+        if (user_bids.length >= 1) {
+            const productsIds = user_bids.map((p) => p.product_id);
+            let productsQuery =
+                'UPDATE bids SET watched_after_accepted = 1 WHERE';
+            for (let i = 0; i < productsIds.length; i++) {
+                if (i == productsIds.length - 1) {
+                    productsQuery =
+                        productsQuery + ` product_id = ${productsIds[i]};`;
+                } else {
+                    productsQuery =
+                        productsQuery + ` product_id = ${productsIds[i]} OR `;
+                }
+            }
+            await database.query(productsQuery);
+        }
         return user_bids;
     } catch (error) {
         console.log(error);
