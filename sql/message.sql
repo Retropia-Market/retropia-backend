@@ -17,7 +17,7 @@ CREATE TABLE `users` (
     `verified` INT DEFAULT 0,
     `email_code` VARCHAR(400) DEFAULT NULL,
     `password_token` VARCHAR(400) DEFAULT NULL,
-    'external_user' INT NOT NULL DEFAULT 0,
+    `external_user` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
 

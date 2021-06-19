@@ -114,6 +114,15 @@ const generatePassToken = async (id, token) => {
   return getUserById(id);
 };
 
+const revokePassToken = async (id) => {
+  await database.query(
+    'UPDATE users SET password_token = null WHERE id = ?',
+    id
+  );
+
+  return getUserById(id);
+};
+
 /**############################################################################
  *
  * Funcion para actualizar el perfil de un usuario
@@ -214,6 +223,7 @@ export {
   emailVerification,
   validateUser,
   generatePassToken,
+  revokePassToken,
   updateProfile,
   updatePassword,
   updateImage,
