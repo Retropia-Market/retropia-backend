@@ -34,8 +34,21 @@ const getMessagesNotifications = async (req, res, next) => {
     }
 };
 
+const getSalesNotifications = async (req, res, next) => {
+    try {
+        const { id: uid } = req.auth;
+        const results = await notificationsRepository.getSalesNotifications(
+            uid
+        );
+        res.send(results);
+    } catch (error) {
+        next(error);
+    }
+};
+
 export {
     getBidsNotifications,
     getMessagesNotifications,
     getReviewsNotifications,
+    getSalesNotifications,
 };

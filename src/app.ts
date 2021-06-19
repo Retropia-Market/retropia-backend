@@ -344,6 +344,12 @@ app.get(
     notificationController.getMessagesNotifications
 );
 
+app.get(
+    '/api/notifications/sales',
+    validateAuthorization,
+    notificationController.getSalesNotifications
+);
+
 //EXTERNAL APIS
 
 app.get('/rawg/search/:game', gamesApiController.getRawgVideoGameInfo);

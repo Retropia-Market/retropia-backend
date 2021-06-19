@@ -109,6 +109,7 @@ async function getUserCompletedBidsByBuyerId(userId) {
     try {
         const query = `SELECT * FROM bids INNER JOIN products ON bids.product_id = products.id WHERE sale_status = 'vendido' AND user_id = '${userId}';`;
         const [user_bids] = await database.query(query);
+        const updateSeenStatus = ``;
         return user_bids;
     } catch (error) {
         console.log(error);
