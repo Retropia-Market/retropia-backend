@@ -1,3 +1,4 @@
+const rug = require('random-username-generator');
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -275,7 +276,7 @@ const userGoogleLogin: RequestHandler = async (req, res, next) => {
       idToken: token,
       audience: process.env.REACT_APP_GOOGLE_LOGIN_ID,
     });
-    const { email, name, given_name, family_name, picture, at_hash } =
+    const { email, given_name, family_name, picture, at_hash } =
       ticket.getPayload();
 
     const user = await usersRepository.getUserByEmail(email);
@@ -285,20 +286,30 @@ const userGoogleLogin: RequestHandler = async (req, res, next) => {
       }
       loggedUser = await usersRepository.getUserById(user.id);
     } else {
+      const generateUsername = async () => {
+        const username = rug.generate();
+        const usernameExists = await usersRepository.getUserByUsername(
+          username
+        );
+        if (usernameExists) {
+          generateUsername();
+        }
+        return username;
+      };
+      const generatedUsername = await generateUsername();
       const userData = {
         //TODO: hacer username unico uuid
-        username: name.replace(/\s+/g, ''),
-        firstName: given_name,
-        lastName: family_name,
+        username: generatedUsername,
+        firstname: given_name,
+        lastame: family_name,
         email: email,
-        password: at_hash,
+        password: await bcrypt.hash(at_hash, 10),
+        external_user: 1,
+        verified: 1,
+        image: picture,
       };
-      userData.password = await bcrypt.hash(userData.password, 10);
-      let newUser = await usersRepository.registerUser(userData);
-      newUser = await usersRepository.makeExternalUser(newUser.id);
-      newUser = await usersRepository.validateUser(newUser.id);
-      // newUser = await usersRepository.validateUser(newUser.id)
-      loggedUser = await usersRepository.updateImage(newUser.id, picture);
+
+      loggedUser = await usersRepository.registerUser(userData);
     }
 
     const tokenPayload = { id: loggedUser.id };
@@ -428,6 +439,43 @@ const updatePassword: RequestHandler = async (req: any, res, next) => {
   }
 };
 
+const setPassword: RequestHandler = async (req: any, res, next) => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+
+    // Comprobar que el id es correcto
+    isCorrectUser(id, req.auth.id);
+
+    // validar nueva password
+    const schema = Joi.object({
+      newPassword: Joi.string().min(8).max(20).alphanum().required(),
+      repeatedNewPassword: Joi.string().min(8).max(20).alphanum().required(),
+    });
+    await schema.validateAsync(data);
+
+    // Comprobar que las nuevas password nuevas coinciden
+    if (data.newPassword !== data.repeatedNewPassword) {
+      const err: ErrnoException = new Error('Las constrasenias no coinciden');
+      err.code = 400;
+      throw err;
+    }
+
+    // Actualizar la password en la database
+    const hashedPassword = await bcrypt.hash(data.newPassword, 10);
+    let user = await usersRepository.updatePassword(hashedPassword, id);
+    user = await usersRepository.updateProfile({ external_user: 0 }, id);
+
+    res.status(201);
+    res.send({
+      user: user.username,
+      res: 'Password changed',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // TODO: REVISAR TIPOS
 const updateImage: RequestHandler = async (req: any, res, next) => {
   try {
@@ -495,6 +543,7 @@ export {
   userGoogleLogin,
   updateProfile,
   updatePassword,
+  setPassword,
   updateImage,
   deleteImage,
 };
