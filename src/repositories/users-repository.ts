@@ -42,6 +42,14 @@ async function getUserByEmail(email) {
   return users[0];
 }
 
+async function getUserByUsername(username) {
+  const [results] = await database.query(
+    'SELECT * FROM users WHERE username = ?',
+    username
+  );
+  return results[0];
+}
+
 async function getUserByPassCode(code) {
   const [results] = await database.query(
     'SELECT * FROM users WHERE password_token = ?',
@@ -73,18 +81,31 @@ async function findUserById(id) {
  */
 
 async function registerUser(data) {
-  const query =
-    'INSERT INTO users (username, password, email, firstname, lastname, email_code) VALUES (?,?,?,?,?,?)';
-  await database.query(query, [
-    data.username,
-    data.password,
-    data.email,
-    data.firstName,
-    data.lastName,
-    data.email_code,
+  const mandatory = {
+    username: data.username,
+    email: data.email,
+    password: data.password,
+  };
+  const optional = Object.keys(data).reduce((acc, field) => {
+    !mandatory[field] ? (acc[field] = data[field]) : acc;
+    return acc;
+  }, {});
+
+  const query = 'INSERT INTO users (username, email, password) VALUES (?,?,?)';
+  const [{ insertId }]: any = await database.query(query, [
+    mandatory.username,
+    mandatory.email,
+    mandatory.password,
   ]);
 
-  return getUserByEmail(data.email);
+  for (const field in optional) {
+    if (optional[field])
+      await database.query(
+        `UPDATE users SET ${field} = '${optional[field]}' WHERE id = '${insertId}'`
+      );
+  }
+
+  return getUserByEmail(mandatory.email);
 }
 
 const emailVerification = async (email_code) => {
@@ -177,7 +198,7 @@ async function updateImage(id, imagePath) {
   const searchQuery = 'SELECT image FROM users WHERE id = ?';
   const [[{ image }]]: any = await database.query(searchQuery, id);
   // borrar imagen anterior si existe
-  image !== null ? await fs.unlink(image) : image;
+  if (image) !image.includes('google') ? await fs.unlink(image) : image;
 
   // acualizar la path a la imagen en la info del usuario
   const updateQuery = 'UPDATE users SET image = ? WHERE id = ?';
@@ -207,16 +228,11 @@ async function deleteImage(id) {
   return findUserById(id);
 }
 
-async function makeExternalUser(id) {
-  await database.query('UPDATE users SET external_user = 1 WHERE id = ?', id);
-
-  return findUserById(id);
-}
-
 export {
   getUsers,
   getUserById,
   getUserByEmail,
+  getUserByUsername,
   getUserByPassCode,
   findUserById,
   registerUser,
@@ -228,5 +244,4 @@ export {
   updatePassword,
   updateImage,
   deleteImage,
-  makeExternalUser,
 };
