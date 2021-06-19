@@ -1,9 +1,13 @@
+import { Request, request, RequestHandler } from 'express';
 import sgMail from '@sendgrid/mail';
-
-import { RequestHandler } from 'express';
-import { CustomReq } from 'src/models/req-handlers';
+import { UserEntity } from 'src/models/db-entities';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
+
+export interface CustomReq extends Request {
+  user: UserEntity;
+  passwordToken?: string;
+}
 
 const accountVerification: RequestHandler = async (
   req: CustomReq,
