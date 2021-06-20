@@ -1,10 +1,13 @@
 import path from 'path';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
 export const uploadUserImg = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
+      const folder = path.join(__dirname, '../static/users-img');
+      !fs.existsSync(folder) ? fs.mkdirSync(folder, { recursive: true }) : null;
       cb(null, 'src/static/users-img/');
     },
     filename: function (req, file, cb) {
