@@ -154,7 +154,7 @@ const updateProduct: RequestHandler = async (req: any, res, next) => {
         const { id } = req.params;
         const schema = Joi.object({
             name: Joi.string().min(1).max(20),
-            status: Joi.string().min(1).max(10),
+            status: Joi.string().min(1),
             location: Joi.string().min(1),
             price: Joi.number().min(1).max(100000),
             description: Joi.string().min(1).max(500),
