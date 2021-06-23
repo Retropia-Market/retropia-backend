@@ -105,7 +105,7 @@ const getFavouriteById: RequestHandler = async (req: any, res, next) => {
             throw err;
         }
 
-        const product = await productsRepository.getSingleProduct(favourite.id);
+        const product = await productsRepository.findProductById(favourite.id);
         if (!product) {
             const err: ErrnoException = new Error(
                 'No se ha encontrado el producto'
