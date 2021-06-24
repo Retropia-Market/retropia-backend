@@ -10,7 +10,7 @@ import {
     bidsController,
     favouritesController,
     categoriesController,
-    gamesApiController,
+    thirdPartyController,
     chatController,
     mailController,
     notificationController,
@@ -367,17 +367,17 @@ app.get(
 
 //EXTERNAL APIS
 
-app.get('/rawg/search/:game', gamesApiController.getRawgVideoGameInfo);
+app.get('/rawg/search/:game', thirdPartyController.getRawgVideoGameInfo);
 
-app.get('/rawg/platform/', gamesApiController.getRawgConsoleInfo);
+app.get('/rawg/platform/', thirdPartyController.getRawgConsoleInfo);
 
-app.get('/sell/autocomplete/:input', gamesApiController.getAutoComplete);
+app.get('/sell/autocomplete/:input', thirdPartyController.getAutoComplete);
 
 app.post(
     '/sell/vision/',
     validateAuthorization,
     uploadProductImage.single('image'),
-    gamesApiController.getGoogleVision
+    thirdPartyController.getGoogleVision
 );
 
 // ERROR HANDLER *********************************************************************************************************
