@@ -11,9 +11,9 @@ objetivo claro, facilitar y promover un mercado olvidado centrándose únicament
 
 ## Autores
 
-- [@germanabenza](https://www.github.com/gabeZ95)
-- [@renzodAstolfi](https://www.github.com/RenzoDastolfi)
-- [@ivanfernandez](https://www.github.com/ivan-gal)
+- [@GermanAbenza](https://www.github.com/gabeZ95)
+- [@RenzoDAstolfi](https://www.github.com/RenzoDastolfi)
+- [@IvanFernandez](https://www.github.com/ivan-gal)
 
 ## Linkedin
 
