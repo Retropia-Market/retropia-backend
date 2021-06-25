@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "ancient-ship-311221",
+  "private_key_id": "035561008354205488e34849673e832eea475334",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCYKGsKY1OAyV2o\n1ac3hW+VBcUL9WkQIIAAytEsGJUELvhKiAlVIjCGdKJceReP//bHu4hiEM1lwQ+t\nDaiQdcF3U7TJ4YNeK2se0FJ0Lx0n0hiYVHx520vxFDI0u4Mjg8lFuExO4TCmBRR8\ndhO9/oWXJsBsGr+1EgkqdzqvtxK3RomS9+zC7RVnBbM/JtuDB6D27J9hXgVHKuoe\nrIw0neB1V5Stxsw0gvnqxK0llqxP9sMMqMy3HTxgajZxQb8qWfxRrGd/AFs/HeYU\nynr+4OM6Um5n7zKqhJZ6z9ziCPNEB356HQgelYiR/6g/q7tDFyFX76ZtRLIFFdye\nMZQMhzKVAgMBAAECgf8uXCJBCAJpOvFOf8pzIDTfMuLWwe9A+qYFl8YjqVm97JG6\nI7i0N7aRQPg3NK35MgP+1yS2vGfYmPotv/ucCETqFpb+67ca+h+pQ8/bln9Lorfb\nseI7PpXk3kJtzrQmHgE1PPIDFpm7+9BCG7foK6SIaUY3qe6/PL+OMMWwxBbvwBWz\nCZ+vlErarqheRSR+DOsXSFg1YFn10HPuxA7qEg0Qzh2X2yPOtZT9gjI4039ELzX5\nW/24bLuK2q6iQjWGvH1YGPJsufnnoY9JHUED70G8zWNhNGaNX9LwXcQebtuiDpAu\nEHApxQIM5+TAShCmrQfT4t7qvxaq4Xhe+qKwZ0ECgYEA0QvVPWqS6HeTsz7j5GV0\nQ18UpLclCmT3eikq0XbA/cmpx832yiGZdXdFMyK2znixsMchI6aCv0MIg7TL5gfu\nRjZis1rlY06C7lXYWbQwa5fkHPCLrpunv6Tz+xrqkdObHD6ZztI8gOx72dJGKgFB\nif9k89dVfma6mKOsGB787K0CgYEAulWAzcqOwnyoHV+tmLcy1pCewUIc4s33ATMl\n3Jyeo91ht9/n28szufMzYKOfJb4O/g8lUDAPJ+OpKpH87YhX93vSmCu9wVrrfpVZ\nYoHdhda/9Pi5kfvou40HhEm/RvdEWuQeu9WDIn5pu9xi44ELJhp0toN/mADrOU5h\nXDJV8okCgYA41bjCG+mZHnmfsCeRfyve7UjVh52gd9b49ZxYmqrZ1Sw90HeaeQwZ\n7bV4s6Vz+UiGQX13DdxaV8VG2a7d+aYEnOC01q+rEjtyxRAvQ1guyHsSiyvO6y7u\nYdCborPHtfpj8Xkry+j7PFBn5k2BOhoxhKhTy2XJGfD9cvJlFHe7eQKBgBmJmmuZ\n9VLmbswHzuz9PrR1gayO+RKEk/PQJMJFnOBsePYQc+CFywMTN9lo02kC0V80iDKj\nQ5B9/TNeasHLS/MZP1WnuQwE//2LToLXtZqgQhK6/APr+Iur2nng+ZwqS24BkczA\niIZzuN4MaGkxyGtieNiC0Tvt9E8YVPOj2m+xAoGAc2OsQU0qLcaeiEvbfEKEKxt/\nzPI1MTO6ySFO3gtAGo/86RBpeDyoE743QtxmbFGn4uoXstWPug51YxR03IBYqoOq\n0eRxb4WG0k9TevanC8z6UWC1tKG+fA0ydeHFomrKzyVfHySn0ilgAVg7xVg7pg7+\nlLCw9/Iq6PTX3k0Y32I=\n-----END PRIVATE KEY-----\n",
+  "client_email": "retropiamarket@ancient-ship-311221.iam.gserviceaccount.com",
+  "client_id": "110029290733158656425",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/retropiamarket%40ancient-ship-311221.iam.gserviceaccount.com"
+}
