@@ -35,7 +35,7 @@ const getRawgConsoleInfo = async (req, res, next) => {
 const getGoogleVision = async (req, res, next) => {
   try {
     const client = new vision.ImageAnnotatorClient({
-      keyFilename: './key.json',
+      keyFilename: './.key.json',
     });
     const { file } = req;
     const [result] = await client.objectLocalization(file.path);
