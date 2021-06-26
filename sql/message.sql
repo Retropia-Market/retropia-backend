@@ -6,21 +6,21 @@ CREATE TABLE `users` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `username` VARCHAR(30) NOT NULL,
     `email` VARCHAR(50) NOT NULL,
-    `password` VARCHAR(500) DEFAULT NULL,
+    `password` VARCHAR(500) NOT NULL,
     `firstname` VARCHAR(50) DEFAULT NULL,
-    `lastname` VARCHAR(50) NOT NULL,
+    `lastname` VARCHAR(50) DEFAULT NULL,
     `location` VARCHAR(100) DEFAULT NULL,  
     `bio` TEXT(500) DEFAULT NULL,
     `image` VARCHAR(100) DEFAULT NULL,
-     `banner` VARCHAR(200) DEFAULT NULL,
+    `banner` VARCHAR(200) DEFAULT NULL,
     `phone_number` VARCHAR(20) DEFAULT NULL,
-    `birth_date` DATE DEFAULT NULL,
+      `birth_date` DATE DEFAULT NULL,
     `verified` INT DEFAULT 0,
     `email_code` VARCHAR(400) DEFAULT NULL,
+    `password_token` VARCHAR(400) DEFAULT NULL,
     `external_user` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 );
-
 
 CREATE TABLE `products` (
     `id` INT NOT NULL AUTO_INCREMENT,
@@ -81,7 +81,7 @@ CREATE TABLE `products_img` (
     `bid_status` VARCHAR(20) NOT NULL DEFAULT 'ofertado',
     `bid_date` DATE NOT NULL,
 	 `watched` INT DEFAULT 0,
-     `watched_after_accepted` INT DEFAULT 0,
+       `watched_after_accepted` INT DEFAULT 0,
     FOREIGN KEY (product_id)
     REFERENCES products(id)
     ON DELETE CASCADE,
@@ -161,8 +161,6 @@ CREATE TABLE `contacts`(
   REFERENCES users(id),
   PRIMARY KEY (`id`)
 );
-
-
 
 INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega'), ('pc');
 
