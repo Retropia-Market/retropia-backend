@@ -40,7 +40,7 @@ const getGoogleVision = async (req, res, next) => {
     const { file } = req;
     const [result] = await client.objectLocalization(file.path);
     const detection = result.localizedObjectAnnotations;
-    res.send(detection);
+    res.send(result);
   } catch (err) {
     next(err);
   }
