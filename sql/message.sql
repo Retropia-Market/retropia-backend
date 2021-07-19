@@ -9,9 +9,9 @@ CREATE TABLE `users` (
     `password` VARCHAR(500) NOT NULL,
     `firstname` VARCHAR(50) DEFAULT NULL,
     `lastname` VARCHAR(50) DEFAULT NULL,
-    `location` VARCHAR(100) DEFAULT NULL,  
+    `location` VARCHAR(500) DEFAULT NULL,  
     `bio` TEXT(500) DEFAULT NULL,
-    `image` VARCHAR(100) DEFAULT NULL,
+    `image` VARCHAR(500) DEFAULT NULL,
     `banner` VARCHAR(200) DEFAULT NULL,
     `phone_number` VARCHAR(20) DEFAULT NULL,
       `birth_date` DATE DEFAULT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE `products` (
     `name` VARCHAR(45) NOT NULL,
     `status` VARCHAR(20) NOT NULL,
     `upload_date` DATE NOT NULL,
-    `location` VARCHAR(100) NOT NULL,  
-    `product_type` VARCHAR(100) NOT NULL,
+    `location` VARCHAR(500) NOT NULL,  
+    `product_type` VARCHAR(500) NOT NULL,
     `price` VARCHAR(255) NOT NULL,	
     `sale_status` VARCHAR(255) DEFAULT 'disponible',
     `description` TEXT(500) DEFAULT NULL,
@@ -152,9 +152,9 @@ CREATE TABLE `message`(
 
 CREATE TABLE `contacts`(
   `id` int NOT NULL AUTO_INCREMENT,
-  `user_id_1` INT NOT NULL ,
+  `user_id_5` INT NOT NULL ,
   `user_id_2` INT NOT NULL ,
-  FOREIGN KEY (user_id_1)
+  FOREIGN KEY (user_id_5)
   REFERENCES users(id)
   ON DELETE CASCADE,
   FOREIGN KEY (user_id_2)
@@ -164,8 +164,8 @@ CREATE TABLE `contacts`(
 
 INSERT INTO categories (name) VALUES ('sony'), ('nintendo'), ('microsoft'), ('atari'), ('sega'), ('pc');
 
-INSERT INTO sub_categories (name, category_id) VALUES ('playstation', 1), ('ps vita', 1), ('psp', 1),('playstation 2', 1), ('playstation 3', 1), ('xbox 360', 3), ('xbox one', 3), ('xbox', 3), ('nes', 2), ('game boy', 2), ('game boy color', 2),
- ('game boy advance', 2), ('nintendo switch', 2),('nintendo ds', 2), ('nintendo 3ds', 2), ('wii', 2), ('wii u', 2), ('nintendo dsi', 2) , ('nintendo 64', 2), ('gamecube', 2), ('pc', 6), ('playstation 5', 1), ('playstation 4', 1),('xbox series s/x', 3),
-('snes', 2), ('commodore / amiga', 6), ('atari 7800', 4), ('atari 5200', 4), ('atari 2600', 4), ('atari flashback', 4), ('atari 8-bit', 4), ('atari st', 4),
-('atari linx', 4), ('atari xegs', 4), ('genesis', 5), ('sega saturn', 5), ('sega cd', 5), ('sega 32x', 5), ('sega master system', 5),  ('dreamcast', 5),
-('3do', 1), ('jaguar', 4), ('game gear', 5), ('neo geo', 2), ('apple II', 6);
+INSERT INTO sub_categories (name, category_id) VALUES ('playstation', 5), ('ps vita', 5), ('psp', 5),('playstation 2', 5), ('playstation 3', 5), ('xbox 360', 25), ('xbox one', 25), ('xbox', 25), ('nes', 15), ('game boy', 15), ('game boy color', 15),
+ ('game boy advance', 15), ('nintendo switch', 15),('nintendo ds', 15), ('nintendo 3ds', 15), ('wii', 15), ('wii u', 15), ('nintendo dsi', 15) , ('nintendo 64', 15), ('gamecube', 15), ('pc', 55), ('playstation 5', 5), ('playstation 4', 5),('xbox series s/x', 25),
+('snes', 15), ('commodore / amiga', 55), ('atari 7800', 35), ('atari 5200', 35), ('atari 2600', 35), ('atari flashback', 35), ('atari 8-bit', 35), ('atari st', 35),
+('atari linx', 35), ('atari xegs', 35), ('genesis', 45), ('sega saturn', 45), ('sega cd', 45), ('sega 32x', 45), ('sega master system', 45),  ('dreamcast', 45),
+('3do', 45), ('jaguar', 35), ('game gear', 45), ('neo geo', 15), ('apple II', 55);
