@@ -4,7 +4,6 @@ yarn.lock
 
 docs/
 static/
-.env
 .vscode/
 .key.json
 
