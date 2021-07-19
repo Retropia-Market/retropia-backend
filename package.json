@@ -11,6 +11,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": "14.17.0"
+  },
   "dependencies": {
     "@google-cloud/vision": "^2.3.2",
     "@sendgrid/mail": "^7.4.4",
