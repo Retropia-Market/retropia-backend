@@ -6,6 +6,7 @@
     "start": "node dist/server.js",
     "dev": "ts-node-dev server.ts",
     "build": "tsc -p tsconfig.json",
+    "postinstall": "tsc",
     "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "keywords": [],
